@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Expenses Tracker</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="trackerconatiner">
+
+  <header class="Trackheadingimg">
+    <div class="headingdv"><h1>Expenses Tracker</h1></div>
+    <div class="trackerimgcontain">
+      <div class="spanimg">
+        <span id="bellBtn">🔔<b id="bellDot" class="bell-dot"></b></span>
+        <span>👤</span>
+        
+        <!-- Notification Popup -->
+        <div id="notifBox" class="notif-box">
+          <div class="notif-header">
+            <h4>Notifications</h4>
+            <span id="closeNotif">✕</span>
+          </div>
+          <div id="notifList"></div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+  <main id="mainacccpntainer">
+    <div class="balance_eye"><p>Total balance</p><span class="eye">👁️</span></div>
+    <div class="balnce"><div class="account_balance"><h2 class="mainbalance">£0</h2></div></div>
+    <div class="expenses_incomecontainer">
+      <div class="incomeblue">
+        <div class="incomeblueimg"><span>↗</span></div>
+        <div class="cutesyacc"><p>income</p><h4 id="constantnumberbalance">+£0</h4></div>
+      </div>
+      <div class="incomered">
+        <div class="incomeblueimg"><span>↘</span></div>
+        <div class="cutesyacc"><p>Expenses</p><h4 id="expenseBalance">-£0</h4></div>
+      </div>
+    </div>
+  </main>
+
+  <section id="transactioncontainer">
+    <div class="trans-header">
+      <h3>Transactions</h3>
+      <p id="seeAllBtn">see all</p>
+    </div>
+  </section>
+
+  <section id="transactioncontiner">
+    <div class="titlecontainer"><h4>Add Transaction</h4></div>
+    <div class="amount-input"><span>£</span><input placeholder="0.00" id="input" type="number"></div>
+    <div class="select-section">
+      <label for="category">Select Category</label>
+      <select id="category">
+        <option value="">Choose...</option>
+        <option value="groceries">Groceries</option>
+        <option value="salary">Salary</option>
+        <option value="coffee">Coffee</option>
+        <option value="car">Uber Car</option>
+        <option value="haircut">Haircut</option>
+        <option value="shopping">Shopping</option>
+      </select>
+    </div>
+    <div class="datesection">
+      <label>Date</label>
+      <div class="imagedate"><h5>Dec/10/2026</h5><span>📅</span></div>
+    </div>
+  </section>
+
+  <button id="btn">+ Add Transaction</button>
+  <button id="resetBtn">Reset All</button>
+
+  <nav class="navigation_section">
+    <div class="bottom-nav">
+      <div class="nav-item active"><span>🏠</span><p>Home</p></div>
+      <div class="nav-item"><span>📊</span><p>Budget</p></div>
+      <div class="nav-item"><span>🕹️</span><p>Analysis</p></div>
+      <div class="nav-item"><span>👤</span><p>Profile</p></div>
+    </div>
+  </nav>
+
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
