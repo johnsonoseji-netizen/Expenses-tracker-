@@ -1,24 +1,25 @@
 * { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,sans-serif; }
 body { background:#fff; padding-bottom:90px; }
 
-/* HEADER WITH BELL + PROFILE - THIS WAS MISSING */
-.app-header{ display:flex; justify-content:space-between; align-items:center; padding:12px 15px; background:white; border-bottom:1px solid #eee; position:sticky; top:0; z-index:10; }
-.user-info{ display:flex; align-items:center; gap:8px; }
-.avatar{ width:32px; height:32px; background:#f0f0f0; border-radius:50%; display:grid; place-items:center; font-size:18px; }
-.header-icons{ display:flex; gap:18px; font-size:22px; align-items:center; }
-.bell{ position:relative; cursor:pointer; }
-.dot{ position:absolute; top:0; right:-2px; width:8px; height:8px; background:red; border-radius:50%; display:block; }
+/* HEADER - BELL + SETTINGS - NOW FIXED */
+.app-header{ display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:#fff; border-bottom:1px solid #eee; position:sticky; top:0; z-index:99; }
+.user-info{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; }
+.avatar{ width:34px; height:34px; background:#e8eaf0; border-radius:50%; display:grid; place-items:center; }
+.header-icons{ display:flex; gap:12px; }
+.icon-btn{ width:36px; height:36px; background:#f5f5f7; border-radius:50%; display:grid; place-items:center; font-size:18px; position:relative; cursor:pointer; }
+.dot{ position:absolute; top:2px; right:2px; width:8px; height:8px; background:#ff3b30; border-radius:50%; border:2px solid white; }
 
-/* SALARY BOX - THIS WAS MISSING */
-.salary-box{ background:#f0f7ff; border:2px dashed #4a7fb5; border-radius:12px; padding:10px; display:flex; gap:8px; align-items:center; margin:12px 0; }
-.salary-box input{ flex:1; border:none; background:transparent; outline:none; font-weight:600; font-size:15px; }
-.salary-box button{ background:#4a7fb5; color:white; border:none; padding:7px 12px; border-radius:8px; font-weight:700; cursor:pointer; }
+/* SALARY - NOW FIXED */
+.salary-box{ background:#f0f7ff; border:2px dashed #4a7fb5; border-radius:14px; padding:12px; display:flex; align-items:center; gap:10px; margin:14px 0; }
+.salary-icon{ font-size:20px; }
+.salary-box input{ flex:1; border:none; outline:none; background:transparent; font-size:15px; font-weight:600; }
+.salary-box button{ background:#4a7fb5; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:700; font-size:13px; white-space:nowrap; }
 
 .top { padding:15px; }
 .top small { color:#666; font-size:14px; }
-.top h1 { color:#0a6b2e; font-size:42px; margin:5px 0 15px; }
+.top h1 { color:#0a6b2e; font-size:42px; margin:5px 0 5px; }
 .top .sub { color:#666; font-size:13px; }
-.cards { display:flex; gap:10px; }
+.cards { display:flex; gap:10px; margin-top:12px; }
 .card { flex:1; padding:14px; border-radius:12px; display:flex; align-items:center; gap:10px; color:white; }
 .card.in { background:#4a7fb5; } .card.ex { background:#c94c4c; }
 .card span { background:white; width:42px; height:42px; border-radius:10px; display:grid; place-items:center; font-size:18px; color:#333; }
@@ -27,4 +28,14 @@ body { background:#fff; padding-bottom:90px; }
 .section-title { display:flex; justify-content:space-between; font-weight:700; font-size:18px; margin-bottom:10px; }
 .box { background:#f5f5f7; padding:15px; border-radius:14px; color:#888; margin-bottom:20px; min-height:50px; }
 .form-title { font-weight:700; margin-bottom:10px; } .label { margin-bottom:5px; font-size:14px; }
-.input-box { border:1px solid #ddd;
+.input-box { border:1px solid #ddd; border-radius:10px; padding:12px; display:flex; gap:10px; align-items:center; margin-bottom:12px; background:white; }
+.input-box input, .input-box select { border:none; flex:1; outline:none; font-size:15px; background:transparent; }
+.btn { background:linear-gradient(90deg,#d32f2f,#ff6f00); color:white; border:none; width:100%; padding:14px; border-radius:12px; font-weight:700; font-size:16px; margin-top:10px; }
+.reset { background:white; border:1px solid #eee; width:100%; padding:12px; border-radius:12px; margin-top:12px; color:#666; font-weight:600; }
+.nav { position:fixed; bottom:0; left:0; right:0; background:white; border-top:1px solid #eee; display:flex; justify-content:space-around; padding:8px 0; }
+.nav div { text-align:center; font-size:11px; color:#888; cursor:pointer; padding:5px 15px; }
+.nav div.active { color:#4a7fb5; font-weight:700; } .nav span { font-size:22px; display:block; }
+.page { display:none; } .page.active { display:block; }
+.progress { height:8px; background:#e0e0e0; border-radius:10px; overflow:hidden; margin-top:10px; }
+.progress div { height:100%; background:#4a7fb5; border-radius:10px; transition:0.3s; }
+#budgetCats .cat { background:white; border:1px solid #eee; border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
