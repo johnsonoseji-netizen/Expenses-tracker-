@@ -1,141 +1,55 @@
-const btn = document.querySelector('#btn');
-const resetBtn = document.querySelector('#resetBtn');
-const seeAllBtn = document.querySelector('#seeAllBtn');
-const mainBal = document.querySelector('.mainbalance');
-const incomeCard = document.querySelector('#constantnumberbalance');
-const expenseCard = document.querySelector('#expenseBalance');
-const input = document.querySelector('#input');
-const catSelect = document.querySelector('#category');
-const transactionContainer = document.querySelector('#transactioncontainer');
+let income = 0, expenses = 0;
+const budgets = { Food:500, Transport:200, Shopping:300, Bills:600 };
+let spent = { Food:0, Transport:0, Shopping:0, Bills:0 };
 
-const bellBtn = document.querySelector('#bellBtn');
-const notifBox = document.querySelector('#notifBox');
-const notifList = document.querySelector('#notifList');
-const bellDot = document.querySelector('#bellDot');
-const closeNotif = document.querySelector('#closeNotif');
+const totalBal = document.getElementById('totalBal');
+const incomeVal = document.getElementById('incomeVal');
+const expVal = document.getElementById('expVal');
+const transList = document.getElementById('transList');
+const amount = document.getElementById('amount');
+const category = document.getElementById('category');
+const dateInput = document.getElementById('date');
 
-let incomeTotal = Number(localStorage.getItem('income')) || 0;
-let coffeeTotal = Number(localStorage.getItem('coffee')) || 0;
-let ubarTotal = Number(localStorage.getItem('ubar')) || 0;
-let groceryTotal = Number(localStorage.getItem('grocery')) || 0;
-let haircutTotal = Number(localStorage.getItem('haircut')) || 0;
-
-let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-let showAll = false;
-
-function addNotification(category, amount){
-  const now = new Date().toLocaleString(); // time + date
-  const msg = `${category} ${amount > 0 ? '+' : '-'}£${Math.abs(amount)} at ${now}`;
-  notifications.unshift({ msg: msg });
-  localStorage.setItem('notifications', JSON.stringify(notifications));
-  if(bellDot) bellDot.classList.add('show');
-  renderNotifs();
+function updateUI(){
+  totalBal.textContent = `£${(income-expenses)}`;
+  incomeVal.textContent = `+£${income}`;
+  expVal.textContent = `-£${expenses}`;
+  document.getElementById('bIncome').textContent = `£${income}`;
+  document.getElementById('bExp').textContent = `£${expenses}`;
+  document.getElementById('bSpent').textContent = `£${expenses}`;
+  document.getElementById('bRem').textContent = `£${2000-expenses}`;
+  document.getElementById('bProg').style.width = Math.min(100, expenses/2000*100)+'%';
+  renderBudgets();
 }
-
-function renderNotifs(){
-  if(!notifList) return;
-  if(notifications.length === 0){
-    notifList.innerHTML = '<p style="padding:15px; font-size:13px; opacity:0.6;">No notifications</p>';
-    return;
-  }
-  notifList.innerHTML = notifications.map(n => `<div class="notif-item">${n.msg}</div>`).join('');
-}
-
-function render() {
-  const expenseTotal = coffeeTotal + ubarTotal + groceryTotal + haircutTotal;
-  const balance = incomeTotal - expenseTotal;
-  mainBal.textContent = '£' + balance;
-  mainBal.style.color = balance < 0 ? 'red' : 'green';
-  incomeCard.textContent = '+£' + incomeTotal;
-  expenseCard.textContent = '-£' + expenseTotal;
-
-  transactionContainer.querySelectorAll('.grosriescontainer').forEach(el => el.remove());
-
-  if (transactions.length === 0) {
-    const empty = document.createElement('div');
-    empty.className = 'grosriescontainer';
-    empty.innerHTML = '<p style="opacity:0.5;">No transactions yet</p>';
-    transactionContainer.appendChild(empty);
-  } else {
-    transactions.forEach((t, i) => {
-      const row = document.createElement('div');
-      row.className = 'grosriescontainer';
-      if (i >= 4 && !showAll) row.style.display = 'none';
-      row.innerHTML = `
-        <div class="gosereitem">
-          <span>${t.icon}</span>
-          <div><h4>${t.name}</h4><h6 class="timedate">${t.date}</h6></div>
-        </div>
-        <h4 class="amount" style="color:${t.amount > 0 ? 'green' : 'red'}">${t.amount > 0 ? '+£' + t.amount : '-£' + Math.abs(t.amount)}</h4>
-      `;
-      transactionContainer.appendChild(row);
-    });
-  }
-
-  if (transactions.length > 4) {
-    seeAllBtn.textContent = showAll ? 'show less' : `see all (${transactions.length - 4} more)`;
-  } else {
-    seeAllBtn.textContent = 'see all';
-  }
-
-  localStorage.setItem('income', incomeTotal);
-  localStorage.setItem('coffee', coffeeTotal);
-  localStorage.setItem('ubar', ubarTotal);
-  localStorage.setItem('grocery', groceryTotal);
-  localStorage.setItem('haircut', haircutTotal);
-  localStorage.setItem('transactions', JSON.stringify(transactions));
-}
-
-render();
-renderNotifs();
-
-btn.addEventListener('click', () => {
-  const val = Number(input.value);
-  const cat = catSelect.value;
-  if (!val || !cat) { alert('Enter amount and category'); return; }
-
-  let icon = '🛒';
-  if (cat === 'salary') { incomeTotal += val; icon = '💰'; }
-  else if (cat === 'coffee') { coffeeTotal += val; icon = '☕️'; }
-  else if (cat === 'car') { ubarTotal += val; icon = '🚘'; }
-  else if (cat === 'haircut') { haircutTotal += val; icon = '💇'; }
-  else { groceryTotal += val; icon = '🛒'; }
-
-  const now = new Date().toLocaleString();
-
-  transactions.unshift({
-    name: cat === 'car' ? 'ubar car' : cat,
-    amount: cat === 'salary' ? val : -val,
-    date: now,
-    icon: icon
-  });
-
-  // BELL: category + amount + time
-  addNotification(cat, cat === 'salary' ? val : -val);
-
-  render();
-  input.value = '';
-  catSelect.value = '';
-});
-
-seeAllBtn.addEventListener('click', () => { showAll = !showAll; render(); });
-
-resetBtn.addEventListener('click', () => {
-  if (confirm('Reset all?')) {
-    localStorage.clear();
-    incomeTotal = coffeeTotal = ubarTotal = groceryTotal = haircutTotal = 0;
-    transactions = []; notifications = [];
-    render(); renderNotifs();
-  }
-});
-
-if(bellBtn){
-  bellBtn.addEventListener('click', () => {
-    notifBox.classList.toggle('active');
-    if(bellDot) bellDot.classList.remove('show');
+function renderBudgets(){
+  const wrap = document.getElementById('budgetCats');
+  wrap.innerHTML='';
+  Object.keys(budgets).forEach(cat=>{
+    const s = spent[cat]||0, b=budgets[cat], pct=Math.round(s/b*100);
+    const over = s>b;
+    wrap.innerHTML+=`<div class="cat ${cat==='Food'?'food':cat==='Transport'?'trans':cat==='Shopping'?'shop':'bills'}">
+      <div class="cat-left"><div class="cat-icon">${cat==='Food'?'🍴':cat==='Transport'?'🚗':cat==='Shopping'?'🛍️':'🧾'}</div><div><b>${cat}</b><br><small>£${s} / £${b}</small></div></div>
+      <div style="text-align:right"><div style="height:6px;width:100px;background:#eee;border-radius:10px;overflow:hidden;margin-bottom:4px;"><div style="width:${Math.min(100,pct)}%;height:100%;background:${over?'#c94c4c':pct>90?'#ff8a00':'#4a7fb5'}"></div></div><span class="pct" style="color:${over?'#c94c4c':'#4a7fb5'}">${pct}% ${over?'• Over':''}</span></div></div>`;
   });
 }
-if(closeNotif){
-  closeNotif.addEventListener('click', () => { notifBox.classList.remove('active'); });
-}
+document.getElementById('addBtn').onclick=()=>{
+  const val=parseFloat(amount.value); const cat=category.value;
+  if(!val||!cat){ alert('Enter amount and category'); return; }
+  if(val>0){ income+=val; } // For demo treat all as expense? Change logic if you want
+  // Actually expense tracker: amount is expense
+  if(transList.textContent.includes('No transactions')) transList.innerHTML='';
+  expenses+=val; spent[cat]=(spent[cat]||0)+val;
+  transList.innerHTML+=`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;"><span>${cat} - ${dateInput.value}</span><b>-£${val}</b></div>`;
+  amount.value=''; updateUI();
+};
+document.getElementById('resetBtn').onclick=()=>{ income=0; expenses=0; spent={Food:0,Transport:0,Shopping:0,Bills:0}; transList.innerHTML='No transactions yet'; updateUI(); };
+document.querySelectorAll('.nav div[data-page]').forEach(d=>{
+  d.onclick=()=>{
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById(d.dataset.page).classList.add('active');
+    document.querySelectorAll('.nav div').forEach(x=>x.classList.remove('active'));
+    d.classList.add('active');
+  }
+});
+updateUI();
+renderBudgets();
