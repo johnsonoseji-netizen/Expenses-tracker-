@@ -8,10 +8,30 @@
 </head>
 <body>
 
+<!-- HEADER WITH BELL + PROFILE - THIS WAS MISSING -->
+<div class="app-header">
+  <div class="user-info">
+    <div class="avatar">👤</div>
+    <b>Expense Tracker</b>
+  </div>
+  <div class="header-icons">
+    <span class="bell">🔔<i class="dot"></i></span>
+    <span>⚙️</span>
+  </div>
+</div>
+
 <div id="home" class="page active">
   <div class="top">
     <small>Total balance</small>
     <h1 id="totalBal">£0</h1>
+
+    <!-- SALARY INPUT - THIS WAS MISSING -->
+    <div class="salary-box">
+      <span>💰</span>
+      <input id="salaryInput" type="number" placeholder="Enter salary e.g 5000">
+      <button id="setSalary">Set Salary</button>
+    </div>
+
     <div class="cards">
       <div class="card in"><span>↗</span><div><b>income</b><strong id="incomeVal">+£0</strong></div></div>
       <div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="expVal">-£0</strong></div></div>
@@ -25,7 +45,7 @@
     <div class="label">Select Category</div>
     <div class="input-box"><select id="category"><option value="">Choose...</option><option>Food</option><option>Transport</option><option>Shopping</option><option>Bills</option></select></div>
     <div class="label">Date</div>
-    <div class="input-box"><input id="date" type="date" value="2026-12-10"><span>📅</span></div>
+    <div class="input-box"><input id="date" type="date"><span>📅</span></div>
     <button class="btn" id="addBtn">+ Add Transaction</button>
     <button class="reset" id="resetBtn">Reset All</button>
   </div>
