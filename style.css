@@ -1,149 +1,32 @@
-* { margin:0; padding:0; box-sizing:border-box; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; }
-body { background:#ffffff; padding-bottom:90px; overflow-x:hidden; color:#111; }
-
-/* HEADER - BELL + SETTINGS */
-.app-header{
-  display:flex; 
-  justify-content:space-between; 
-  align-items:center; 
-  padding:12px 16px; 
-  background:#fff; 
-  border-bottom:1px solid #eeeeee; 
-  position:sticky; 
-  top:0; 
-  z-index:99;
+/* FIX TRANSACTIONS OVERFLOW */
+#transList{
+  background:#f6f6f8;
+  border-radius:16px;
+  padding:10px 14px;
+  border:1px solid #f0f0f0;
+  display:flex;
+  flex-direction:column;
+  gap:0;
+  overflow:hidden;
+  max-height:220px;
+  overflow-y:auto;
 }
-.user-info{ display:flex; align-items:center; gap:10px; font-weight:700; font-size:15px; }
-.avatar{ width:34px; height:34px; background:#e8eaf0; border-radius:50%; display:grid; place-items:center; font-size:18px; }
-.header-icons{ display:flex; gap:12px; }
-.icon-btn{ width:38px; height:38px; background:#f5f5f7; border-radius:50%; display:grid; place-items:center; font-size:19px; position:relative; cursor:pointer; }
-.dot{ position:absolute; top:3px; right:3px; width:8px; height:8px; background:#ff3b30; border-radius:50%; border:2px solid white; }
-
-/* TOP - BALANCE + SALARY */
-.top{ padding:16px; background:#fff; }
-.top small{ color:#777; font-size:13px; font-weight:500; }
-.top h1{ color:#0a6b2e; font-size:42px; margin:4px 0 2px; font-weight:800; letter-spacing:-1px; }
-.top .sub{ color:#666; font-size:13px; margin-top:8px; }
-
-.salary-box{ 
-  background:#f0f7ff; 
-  border:2px dashed #4a7fb5; 
-  border-radius:14px; 
-  padding:12px 14px; 
-  display:flex; 
-  align-items:center; 
-  gap:10px; 
-  margin:14px 0 16px; 
-}
-.salary-icon{ font-size:20px; }
-.salary-box input{ flex:1; border:none; outline:none; background:transparent; font-size:15px; font-weight:600; color:#222; }
-.salary-box input::placeholder{ color:#8aa8c8; font-weight:400; }
-.salary-box button{ background:#4a7fb5; color:white; border:none; padding:9px 16px; border-radius:10px; font-weight:700; font-size:13px; cursor:pointer; }
-
-/* INCOME / EXPENSE CARDS */
-.cards{ display:flex; gap:10px; margin-top:4px; }
-.card{ flex:1; padding:14px; border-radius:14px; display:flex; align-items:center; gap:11px; color:white; }
-.card.in{ background:#4a7fb5; }
-.card.ex{ background:#c94c4c; }
-.card span{ background:white; width:42px; height:42px; border-radius:10px; display:grid; place-items:center; font-size:18px; color:#333; flex-shrink:0; }
-.card b{ display:block; font-size:11px; font-weight:500; opacity:0.9; text-transform:uppercase; letter-spacing:0.3px; }
-.card strong{ font-size:17px; display:block; margin-top:2px; font-weight:700; }
-
-/* TRANSACTIONS - FIXED & GREAT */
-.section{ padding:16px; }
-.section-title{ display:flex; justify-content:space-between; align-items:center; font-weight:700; font-size:17px; margin-bottom:12px; color:#111; }
-.section-title small{ font-size:13px; color:#4a7fb5; font-weight:600; cursor:pointer; }
-
-.box{ 
-  background:#f6f6f8; 
-  padding:18px; 
-  border-radius:16px; 
-  color:#888; 
-  margin-bottom:22px; 
+#transList:empty, #transList:contains("No transactions"){
   min-height:54px;
-  display:flex; 
-  align-items:center; 
+  display:flex;
+  align-items:center;
   justify-content:center;
+  color:#888;
   font-size:14px;
-  border:1px solid #f0f0f2;
-  text-align:center;
 }
 
-.form-title{ font-weight:800; margin-bottom:14px; font-size:16px; color:#111; }
-.label{ margin-bottom:6px; font-size:13px; color:#444; font-weight:500; }
-
-.input-box{ 
-  border:1.6px solid #e5e5e7; 
-  border-radius:12px; 
-  padding:13px 14px; 
-  display:flex; 
-  gap:10px; 
-  align-items:center; 
-  margin-bottom:14px; 
-  background:#fff;
-  transition:all 0.2s;
-}
-.input-box:focus-within{ border-color:#4a7fb5; box-shadow:0 0 0 3px rgba(74,127,181,0.12); }
-.input-box input, .input-box select{ border:none; flex:1; outline:none; font-size:15px; background:transparent; width:100%; color:#222; }
-.input-box input::placeholder{ color:#aaa; }
-.input-box span{ font-weight:700; color:#111; font-size:15px; flex-shrink:0; }
-.input-box select{ color:#555; }
-
-/* BUTTONS */
-.btn{ 
-  background:linear-gradient(90deg,#e53935,#ff6f00); 
-  color:white; 
-  border:none; 
-  width:100%; 
-  padding:15px; 
-  border-radius:12px; 
-  font-weight:800; 
-  font-size:15px; 
-  margin-top:6px; 
-  cursor:pointer; 
-  letter-spacing:0.2px;
-  box-shadow:0 4px 14px rgba(229,57,53,0.28);
-  transition:0.15s;
-}
-.btn:active{ transform:scale(0.98); }
-
-.reset{ 
-  background:#fff; 
-  border:1.6px solid #eeeeee; 
-  width:100%; 
-  padding:13px; 
-  border-radius:12px; 
-  margin-top:10px; 
-  color:#777; 
-  font-weight:600; 
-  font-size:14px;
+/* Make see all clickable */
+.section-title small{
+  color:#4a7fb5;
+  font-weight:600;
   cursor:pointer;
-  transition:0.15s;
+  padding:4px 8px;
+  border-radius:6px;
+  background:#f0f7ff;
 }
-.reset:active{ background:#fafafa; }
-
-/* PAGES */
-.page{ display:none !important; }
-.page.active{ display:block !important; }
-
-/* PROGRESS & BUDGET */
-.progress{ height:8px; background:#e8e8ea; border-radius:10px; overflow:hidden; margin-top:12px; }
-.progress div{ height:100%; background:#4a7fb5; border-radius:10px; transition:width 0.4s ease; }
-#budgetCats .cat{ background:#fff; border:1px solid #eeeeee; border-radius:12px; padding:12px; display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-.cat-left{ display:flex; align-items:center; gap:10px; }
-
-/* BOTTOM NAV */
-.nav{ 
-  position:fixed; 
-  bottom:0; left:0; right:0; 
-  background:#ffffff; 
-  border-top:1px solid #eeeeee; 
-  display:flex; 
-  justify-content:space-around; 
-  padding:8px 0 12px; 
-  z-index:99;
-  box-shadow:0 -2px 10px rgba(0,0,0,0.04);
-}
-.nav div{ text-align:center; font-size:11px; color:#8a8a8e; cursor:pointer; padding:5px 12px; flex:1; font-weight:500; }
-.nav div.active{ color:#4a7fb5; font-weight:700; }
-.nav span{ font-size:22px; display:block; margin-bottom:2px; }
+.section-title small:active{ background:#d6e6f8; }
