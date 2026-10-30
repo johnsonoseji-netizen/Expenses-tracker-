@@ -11,7 +11,6 @@ const salaryInput = document.getElementById('salaryInput');
 const dateInput = document.getElementById('date');
 if(dateInput) dateInput.valueAsDate = new Date();
 
-// ===== NOTIFICATION SYSTEM WITH DATE =====
 function requestNotifPermission(){
   if('Notification' in window && Notification.permission !== 'granted'){
     Notification.requestPermission();
@@ -54,7 +53,6 @@ function showNotif(title, body, type='info'){
   if(notifications.length > 50) notifications = notifications.slice(0,50);
   saveNotifications();
 
-  // Toast
   const toast = document.createElement('div');
   toast.innerHTML = `<b>${title}</b><br><small>${body}</small><br><small style="opacity:0.7;font-size:10px;">${full}</small>`;
   toast.style.cssText = `position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#111;color:white;padding:12px 18px;border-radius:14px;font-size:13px;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,0.3);max-width:85%;line-height:1.4;`;
@@ -116,7 +114,6 @@ function save(){
   localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
-// ===== FIXED UI - NO FLOATING OUTSIDE =====
 function updateUI(){
   const totalExpenses = transactions.reduce((s,t)=> s+t.amount, 0);
   const totalBalance = income - totalExpenses;
@@ -143,7 +140,6 @@ function updateUI(){
   if(bExp) bExp.textContent = `£${totalExpenses.toLocaleString()}`;
   if(tipPct) tipPct.textContent = `${Math.min(100, Math.round((totalExpenses/2000)*100))}%`;
 
-  // LOW BALANCE < 50
   if(totalBalance > 0 && totalBalance < 50){
     const lastLow = localStorage.getItem('lastLowNotif');
     if(lastLow !== totalBalance.toString()){
@@ -156,7 +152,6 @@ function updateUI(){
     localStorage.removeItem('lastLowNotif');
   }
 
-  // FIXED TRANSACTION LIST - NO OVERFLOW, SHOW ONLY 3
   if(transactions.length === 0){
     transListEl.innerHTML = `<div style="padding:12px;text-align:center;color:#888;">No transactions yet</div>`;
   } else {
@@ -192,22 +187,10 @@ function renderBudgetCats(){
   container.innerHTML = cats.map(c=>{
     const spent = transactions.filter(t=> t.category===c.name).reduce((s,t)=>s+t.amount,0);
     const pct = Math.min(100, Math.round((spent/c.budget)*100));
-    return `
-      <div class="budget-cat ${c.color}">
-        <div class="budget-cat-top">
-          <div class="budget-cat-left">
-            <div class="cat-icon">${c.icon}</div>
-            <div><b>${c.name}</b><small>£${spent} of £${c.budget}</small></div>
-          </div>
-          <div class="budget-cat-right"><strong>${pct}%</strong></div>
-        </div>
-        <div class="progress"><div style="width:${pct}%"></div></div>
-      </div>
-    `;
+    return `<div class="budget-cat ${c.color}"><div class="budget-cat-top"><div class="budget-cat-left"><div class="cat-icon">${c.icon}</div><div><b>${c.name}</b><small>£${spent} of £${c.budget}</small></div></div><div class="budget-cat-right"><strong>${pct}%</strong></div></div><div class="progress"><div style="width:${pct}%"></div></div></div>`;
   }).join('');
 }
 
-// ===== SEE ALL - SHOW FULL HISTORY =====
 function showFullHistory(){
   const modal = document.getElementById('historyModal');
   const list = document.getElementById('fullHistoryList');
@@ -233,7 +216,6 @@ function showFullHistory(){
   modal.style.display = 'flex';
 }
 
-// EVENTS
 document.getElementById('setSalary')?.addEventListener('click', ()=>{
   const val = parseFloat(salaryInput.value);
   if(!val || val <=0){ alert('Enter valid salary'); return; }
@@ -260,14 +242,10 @@ document.getElementById('addBtn')?.addEventListener('click', ()=>{
 document.getElementById('resetBtn')?.addEventListener('click', ()=>{
   if(confirm('Reset all? This deletes everything permanently.')){
     income=0; transactions=[]; notifications=[]; localStorage.clear(); updateUI();
-    showNotif('System', 'All data cleared', 'info');
   }
 });
 
 document.getElementById('notifBell')?.addEventListener('click', showNotificationPanel);
-document.querySelectorAll('.icon-btn')[0]?.addEventListener('click', showNotificationPanel);
-
-// SEE ALL CLICK
 document.getElementById('seeAllBtn')?.addEventListener('click', showFullHistory);
 document.getElementById('closeHistory')?.addEventListener('click', ()=>{
   document.getElementById('historyModal').style.display='none';
@@ -276,7 +254,6 @@ document.getElementById('historyModal')?.addEventListener('click', (e)=>{
   if(e.target.id==='historyModal') e.currentTarget.style.display='none';
 });
 
-// NAV
 document.querySelectorAll('.nav div[data-page]').forEach(el=>{
   el.addEventListener('click', ()=>{
     document.querySelectorAll('.nav div').forEach(n=> n.classList.remove('active'));
