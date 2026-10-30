@@ -8,15 +8,14 @@
 </head>
 <body>
 
-<!-- HEADER WITH BELL + PROFILE - THIS WAS MISSING -->
 <div class="app-header">
   <div class="user-info">
     <div class="avatar">👤</div>
-    <b>Expense Tracker</b>
+    <span>Expense Tracker</span>
   </div>
   <div class="header-icons">
-    <span class="bell">🔔<i class="dot"></i></span>
-    <span>⚙️</span>
+    <div class="icon-btn">🔔<span class="dot"></span></div>
+    <div class="icon-btn">⚙️</div>
   </div>
 </div>
 
@@ -24,14 +23,11 @@
   <div class="top">
     <small>Total balance</small>
     <h1 id="totalBal">£0</h1>
-
-    <!-- SALARY INPUT - THIS WAS MISSING -->
     <div class="salary-box">
-      <span>💰</span>
+      <span class="salary-icon">💰</span>
       <input id="salaryInput" type="number" placeholder="Enter salary e.g 5000">
       <button id="setSalary">Set Salary</button>
     </div>
-
     <div class="cards">
       <div class="card in"><span>↗</span><div><b>income</b><strong id="incomeVal">+£0</strong></div></div>
       <div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="expVal">-£0</strong></div></div>
@@ -41,7 +37,7 @@
     <div class="section-title"><span>Transactions</span><small>see all</small></div>
     <div class="box" id="transList">No transactions yet</div>
     <div class="form-title">Add Transaction</div>
-    <div class="input-box">£ <input id="amount" type="number" placeholder="0.00"></div>
+    <div class="input-box"><span>£</span><input id="amount" type="number" placeholder="0.00"></div>
     <div class="label">Select Category</div>
     <div class="input-box"><select id="category"><option value="">Choose...</option><option>Food</option><option>Transport</option><option>Shopping</option><option>Bills</option></select></div>
     <div class="label">Date</div>
@@ -57,24 +53,16 @@
     <h1 style="color:#111;">£2,000.00</h1>
     <p class="sub">Spent: <span id="bSpent">£0</span> • Remaining: <b id="bRem" style="color:green;">£2,000</b></p>
     <div class="progress"><div id="bProg" style="width:0%"></div></div>
-    <div class="cards" style="margin-top:15px;">
-      <div class="card in"><span>💼</span><div><b>Income</b><strong id="bIncome">£0</strong></div></div>
-      <div class="card ex"><span>💳</span><div><b>Expenses</b><strong id="bExp">£0</strong></div></div>
-    </div>
   </div>
-  <div class="section">
-    <div class="section-title"><span>Budget Categories</span></div>
-    <div id="budgetCats"></div>
-  </div>
+  <div class="section"><div class="section-title"><span>Budget Categories</span></div><div id="budgetCats"></div></div>
 </div>
 
 <div class="nav">
   <div class="active" data-page="home"><span>🏠</span>Home</div>
   <div data-page="budget"><span>📊</span>Budget</div>
-  <div><span>🎯</span>Analysis</div>
-  <div><span>👤</span>Profile</div>
+  <div data-page="analysis"><span>🎯</span>Analysis</div>
+  <div data-page="profile"><span>👤</span>Profile</div>
 </div>
-
 <script src="app.js"></script>
 </body>
 </html>
