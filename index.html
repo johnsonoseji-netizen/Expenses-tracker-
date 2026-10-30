@@ -46,17 +46,33 @@
     <button class="reset" id="resetBtn">Reset All</button>
   </div>
 </div>
-
 <div id="budget" class="page">
-  <div class="top">
+  <div class="budget-top">
     <small>Total Budget</small>
-    <h1 style="color:#111;">£2,000.00</h1>
-    <p class="sub">Spent: <span id="bSpent">£0</span> • Remaining: <b id="bRem" style="color:green;">£2,000</b></p>
-    <div class="progress"><div id="bProg" style="width:0%"></div></div>
+    <h1>£2,000.00</h1>
+    <div class="budget-stats">
+      <span>Spent: <b id="bSpent">£0</b></span>
+      <span>Remaining: <b id="bRem" style="color:#0a6b2e;">£2,000</b></span>
+    </div>
+    <div class="progress big"><div id="bProg" style="width:0%"></div></div>
+    
+    <div class="cards" style="margin-top:16px;">
+      <div class="card in"><span>💼</span><div><b>Income</b><strong id="bIncome">£0</strong></div></div>
+      <div class="card ex"><span>💳</span><div><b>Expenses</b><strong id="bExp">£0</strong></div></div>
+    </div>
   </div>
-  <div class="section"><div class="section-title"><span>Budget Categories</span></div><div id="budgetCats"></div></div>
-</div>
 
+  <div class="section">
+    <div class="section-title"><span>Budget Categories</span><small style="color:#888; font-weight:400;">4 categories</small></div>
+    <div id="budgetCats">
+      <!-- Will be filled by JS, but here is design preview -->
+    </div>
+
+    <div class="budget-tip">
+      💡 <b>Tip:</b> You have spent <span id="tipPct">0%</span> of your budget. Keep tracking!
+    </div>
+  </div>
+</div>
 <div class="nav">
   <div class="active" data-page="home"><span>🏠</span>Home</div>
   <div data-page="budget"><span>📊</span>Budget</div>
