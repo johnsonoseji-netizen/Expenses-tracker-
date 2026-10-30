@@ -1,30 +1,64 @@
-/* FIX TRANSACTIONS OVERFLOW - FINAL */
-#transList{
-  background:#f6f6f8;
-  border-radius:16px;
-  padding:10px 14px;
-  border:1px solid #f0f0f0;
-  display:flex;
-  flex-direction:column;
-  overflow:hidden;
-  max-height:220px;
-  overflow-y:auto;
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
 }
-#transList > div:last-child{ border-bottom:none !important; }
-.section-title small{
-  color:#4a7fb5;
-  font-weight:600;
+body{
+  background:#f2f2f7;
+  color:#111;
+  padding-bottom:90px;
+  overflow-x:hidden;
+  -webkit-tap-highlight-color:transparent;
+}
+
+/* HEADER */
+.app-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:14px 16px;
+  background:white;
+  position:sticky;
+  top:0;
+  z-index:100;
+  border-bottom:1px solid #eee;
+}
+.user-info{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight:700;
+  font-size:16px;
+}
+.avatar{
+  width:34px;
+  height:34px;
+  background:#f0f0f0;
+  border-radius:50%;
+  display:grid;
+  place-items:center;
+}
+.header-icons{
+  display:flex;
+  gap:10px;
+}
+.icon-btn{
+  width:36px;
+  height:36px;
+  background:#f6f6f8;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  font-size:18px;
   cursor:pointer;
-  padding:4px 10px;
-  border-radius:8px;
-  background:#f0f7ff;
+  position:relative;
   user-select:none;
 }
-.section-title small:active{ background:#d6e6f8; }
 .dot{
   position:absolute;
-  top:-2px;
-  right:-2px;
+  top:-4px;
+  right:-4px;
   min-width:18px;
   height:18px;
   background:#ff3b30;
@@ -36,6 +70,80 @@
   font-size:11px;
   font-weight:700;
   line-height:1;
-  padding:0 3px;
+  padding:0 4px;
 }
-.icon-btn{ position:relative; }
+
+/* PAGES */
+.page{ display:none; }
+.page.active{ display:block; }
+
+/* TOP BALANCE CARD */
+.top{
+  background:white;
+  padding:20px 16px 16px;
+  border-radius:0 0 20px 20px;
+}
+.top small{
+  color:#888;
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  font-weight:700;
+}
+.top h1{
+  font-size:36px;
+  margin:6px 0 14px;
+  color:#0a6b2e;
+  font-weight:800;
+  letter-spacing:-1px;
+}
+
+/* SALARY BOX */
+.salary-box{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#f6f6f8;
+  border:1px solid #ececec;
+  border-radius:14px;
+  padding:8px 10px;
+}
+.salary-icon{ font-size:20px; flex-shrink:0; }
+.salary-box input{
+  flex:1;
+  border:none;
+  background:transparent;
+  font-size:15px;
+  outline:none;
+  min-width:0;
+}
+.salary-box button{
+  background:#111;
+  color:white;
+  border:none;
+  padding:9px 16px;
+  border-radius:10px;
+  font-weight:700;
+  font-size:13px;
+  cursor:pointer;
+  flex-shrink:0;
+}
+.salary-box button:active{ transform:scale(0.96); }
+
+/* INCOME / EXPENSE CARDS */
+.cards{
+  display:flex;
+  gap:10px;
+  margin-top:16px;
+}
+.card{
+  flex:1;
+  background:#f6f6f8;
+  border-radius:14px;
+  padding:12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border:1px solid #f0f0f0;
+}
+.card span{
