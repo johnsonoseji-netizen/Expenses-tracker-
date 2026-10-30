@@ -1,90 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Expenses Tracker</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expense Tracker</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div id="trackerconatiner">
-
-  <header class="Trackheadingimg">
-    <div class="headingdv"><h1>Expenses Tracker</h1></div>
-    <div class="trackerimgcontain">
-      <div class="spanimg">
-        <span id="bellBtn">🔔<b id="bellDot" class="bell-dot"></b></span>
-        <span>👤</span>
-        
-        <!-- Notification Popup -->
-        <div id="notifBox" class="notif-box">
-          <div class="notif-header">
-            <h4>Notifications</h4>
-            <span id="closeNotif">✕</span>
-          </div>
-          <div id="notifList"></div>
-        </div>
-
-      </div>
+<div id="home" class="page active">
+  <div class="top">
+    <small>Total balance</small>
+    <h1 id="totalBal">£0</h1>
+    <div class="cards">
+      <div class="card in"><span>↗</span><div><b>income</b><strong id="incomeVal">+£0</strong></div></div>
+      <div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="expVal">-£0</strong></div></div>
     </div>
-  </header>
+  </div>
+  <div class="section">
+    <div class="section-title"><span>Transactions</span><small>see all</small></div>
+    <div class="box" id="transList">No transactions yet</div>
+    <div class="form-title">Add Transaction</div>
+    <div class="input-box">£ <input id="amount" type="number" placeholder="0.00"></div>
+    <div class="label">Select Category</div>
+    <div class="input-box"><select id="category"><option value="">Choose...</option><option>Food</option><option>Transport</option><option>Shopping</option><option>Bills</option></select></div>
+    <div class="label">Date</div>
+    <div class="input-box"><input id="date" type="date" value="2026-12-10"><span>📅</span></div>
+    <button class="btn" id="addBtn">+ Add Transaction</button>
+    <button class="reset" id="resetBtn">Reset All</button>
+  </div>
+</div>
 
-  <main id="mainacccpntainer">
-    <div class="balance_eye"><p>Total balance</p><span class="eye">👁️</span></div>
-    <div class="balnce"><div class="account_balance"><h2 class="mainbalance">£0</h2></div></div>
-    <div class="expenses_incomecontainer">
-      <div class="incomeblue">
-        <div class="incomeblueimg"><span>↗</span></div>
-        <div class="cutesyacc"><p>income</p><h4 id="constantnumberbalance">+£0</h4></div>
-      </div>
-      <div class="incomered">
-        <div class="incomeblueimg"><span>↘</span></div>
-        <div class="cutesyacc"><p>Expenses</p><h4 id="expenseBalance">-£0</h4></div>
-      </div>
+<div id="budget" class="page">
+  <div class="top">
+    <small>Total Budget</small>
+    <h1 style="color:#111;">£2,000.00</h1>
+    <p class="sub">Spent: <span id="bSpent">£0</span> • Remaining: <b id="bRem" style="color:green;">£2,000</b></p>
+    <div class="progress"><div id="bProg" style="width:0%"></div></div>
+    <div class="cards" style="margin-top:15px;">
+      <div class="card in"><span>💼</span><div><b>Income</b><strong id="bIncome">£0</strong></div></div>
+      <div class="card ex"><span>💳</span><div><b>Expenses</b><strong id="bExp">£0</strong></div></div>
     </div>
-  </main>
+  </div>
+  <div class="section">
+    <div class="section-title"><span>Budget Categories</span></div>
+    <div id="budgetCats"></div>
+  </div>
+</div>
 
-  <section id="transactioncontainer">
-    <div class="trans-header">
-      <h3>Transactions</h3>
-      <p id="seeAllBtn">see all</p>
-    </div>
-  </section>
-
-  <section id="transactioncontiner">
-    <div class="titlecontainer"><h4>Add Transaction</h4></div>
-    <div class="amount-input"><span>£</span><input placeholder="0.00" id="input" type="number"></div>
-    <div class="select-section">
-      <label for="category">Select Category</label>
-      <select id="category">
-        <option value="">Choose...</option>
-        <option value="groceries">Groceries</option>
-        <option value="salary">Salary</option>
-        <option value="coffee">Coffee</option>
-        <option value="car">Uber Car</option>
-        <option value="haircut">Haircut</option>
-        <option value="shopping">Shopping</option>
-      </select>
-    </div>
-    <div class="datesection">
-      <label>Date</label>
-      <div class="imagedate"><h5>Dec/10/2026</h5><span>📅</span></div>
-    </div>
-  </section>
-
-  <button id="btn">+ Add Transaction</button>
-  <button id="resetBtn">Reset All</button>
-
-  <nav class="navigation_section">
-    <div class="bottom-nav">
-      <div class="nav-item active"><span>🏠</span><p>Home</p></div>
-      <div class="nav-item"><span>📊</span><p>Budget</p></div>
-      <div class="nav-item"><span>🕹️</span><p>Analysis</p></div>
-      <div class="nav-item"><span>👤</span><p>Profile</p></div>
-    </div>
-  </nav>
-
+<div class="nav">
+  <div class="active" data-page="home"><span>🏠</span>Home</div>
+  <div data-page="budget"><span>📊</span>Budget</div>
+  <div><span>🎯</span>Analysis</div>
+  <div><span>👤</span>Profile</div>
 </div>
 
 <script src="app.js"></script>
