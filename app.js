@@ -1,4 +1,4 @@
-// ===== EXPENSE TRACKER WITH STORED NOTIFICATIONS + DATE =====
+// ===== EXPENSE TRACKER - FINAL CORRECTED WITH SEE ALL + STORED NOTIFICATIONS =====
 let income = parseFloat(localStorage.getItem('income')) || 0;
 let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
 let notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
@@ -11,7 +11,7 @@ const salaryInput = document.getElementById('salaryInput');
 const dateInput = document.getElementById('date');
 if(dateInput) dateInput.valueAsDate = new Date();
 
-// ===== NOTIFICATION SYSTEM WITH DATE STORAGE =====
+// ===== NOTIFICATION SYSTEM WITH DATE =====
 function requestNotifPermission(){
   if('Notification' in window && Notification.permission !== 'granted'){
     Notification.requestPermission();
@@ -33,59 +33,48 @@ function saveNotifications(){
 
 function updateBellCount(){
   const dot = document.querySelector('.dot');
-  if(dot){
+  if(!dot) return;
+  const unread = notifications.filter(n=>!n.read).length;
+  if(unread > 0){
+    dot.style.display = 'grid';
+    dot.textContent = unread > 9 ? '9+' : unread;
+    dot.style.minWidth = '18px';
+    dot.style.height = '18px';
+    dot.style.fontSize = '11px';
+  } else {
     dot.style.display = notifications.length > 0 ? 'block' : 'none';
-    // Show count
-    if(notifications.filter(n=>!n.read).length > 0){
-      dot.textContent = notifications.filter(n=>!n.read).length;
-    }
+    dot.textContent = '';
+    if(notifications.length === 0) dot.style.display = 'none';
   }
 }
 
 function showNotif(title, body, type='info'){
   const {full, iso} = formatDate();
-  
-  // 1. SAVE TO HISTORY WITH DATE
-  notifications.unshift({
-    id: Date.now(),
-    title,
-    body,
-    date: full,
-    iso,
-    type,
-    read: false
-  });
-  // Keep only last 50
+  notifications.unshift({id: Date.now(), title, body, date: full, iso, type, read: false});
   if(notifications.length > 50) notifications = notifications.slice(0,50);
   saveNotifications();
 
-  // 2. Toast
+  // Toast
   const toast = document.createElement('div');
   toast.innerHTML = `<b>${title}</b><br><small>${body}</small><br><small style="opacity:0.7;font-size:10px;">${full}</small>`;
   toast.style.cssText = `position:fixed;top:70px;left:50%;transform:translateX(-50%);background:#111;color:white;padding:12px 18px;border-radius:14px;font-size:13px;z-index:9999;box-shadow:0 8px 30px rgba(0,0,0,0.3);max-width:85%;line-height:1.4;`;
   document.body.appendChild(toast);
   setTimeout(()=> toast.remove(), 4500);
 
-  // 3. System notification
   if('Notification' in window && Notification.permission === 'granted'){
-    new Notification(title, {body: `${body}\n${full}`, icon:'https://cdn-icons-png.flaticon.com/512/2331/2331941.png'});
+    new Notification(title, {body: `${body}\n${full}`});
   }
   if(navigator.vibrate) navigator.vibrate([100,50,100]);
 }
 
-// Show notification panel when bell clicked
 function showNotificationPanel(){
-  // Mark all as read
   notifications.forEach(n=> n.read = true);
   saveNotifications();
-
   let panel = document.getElementById('notifPanel');
   if(panel) panel.remove();
-
   panel = document.createElement('div');
   panel.id = 'notifPanel';
   panel.style.cssText = `position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:flex-end;`;
-
   const listHtml = notifications.length === 0 ? 
     `<div style="padding:40px;text-align:center;color:#888;">No notifications yet</div>` :
     notifications.map(n=>`
@@ -114,13 +103,10 @@ function showNotificationPanel(){
     </div>
   `;
   document.body.appendChild(panel);
-  
   panel.addEventListener('click', (e)=>{
     if(e.target.id==='closeNotif' || e.target.id==='notifPanel') panel.remove();
     if(e.target.id==='clearNotif'){
-      if(confirm('Clear all notifications?')){
-        notifications=[]; saveNotifications(); panel.remove();
-      }
+      if(confirm('Clear all notifications?')){ notifications=[]; saveNotifications(); panel.remove(); }
     }
   });
 }
@@ -130,6 +116,7 @@ function save(){
   localStorage.setItem('transactions', JSON.stringify(transactions));
 }
 
+// ===== FIXED UI - NO FLOATING OUTSIDE =====
 function updateUI(){
   const totalExpenses = transactions.reduce((s,t)=> s+t.amount, 0);
   const totalBalance = income - totalExpenses;
@@ -141,19 +128,26 @@ function updateUI(){
   const bSpent = document.getElementById('bSpent');
   const bRem = document.getElementById('bRem');
   const bProg = document.getElementById('bProg');
+  const bIncome = document.getElementById('bIncome');
+  const bExp = document.getElementById('bExp');
+  const tipPct = document.getElementById('tipPct');
+  
   if(bSpent) bSpent.textContent = `£${totalExpenses.toLocaleString()}`;
-  if(bRem) {
+  if(bRem){
     const remaining = 2000 - totalExpenses;
     bRem.textContent = `£${remaining.toLocaleString()}`;
+    bRem.style.color = remaining < 0 ? '#e53935' : '#0a6b2e';
   }
   if(bProg) bProg.style.width = `${Math.min(100, Math.round((totalExpenses/2000)*100))}%`;
+  if(bIncome) bIncome.textContent = `£${income.toLocaleString()}`;
+  if(bExp) bExp.textContent = `£${totalExpenses.toLocaleString()}`;
+  if(tipPct) tipPct.textContent = `${Math.min(100, Math.round((totalExpenses/2000)*100))}%`;
 
-  // LOW BALANCE CHECK
+  // LOW BALANCE < 50
   if(totalBalance > 0 && totalBalance < 50){
-    // Only notify once per low balance state
     const lastLow = localStorage.getItem('lastLowNotif');
     if(lastLow !== totalBalance.toString()){
-      showNotif('⚠️ Low Balance Alert!', `Your balance is only £${totalBalance}. Below 50 naira threshold!`, 'warning');
+      showNotif('⚠️ Low Balance Alert!', `Your balance is only £${totalBalance}. Below 50 threshold!`, 'warning');
       localStorage.setItem('lastLowNotif', totalBalance.toString());
     }
     if(totalBalEl) totalBalEl.style.color = '#e53935';
@@ -162,21 +156,81 @@ function updateUI(){
     localStorage.removeItem('lastLowNotif');
   }
 
+  // FIXED TRANSACTION LIST - NO OVERFLOW, SHOW ONLY 3
   if(transactions.length === 0){
-    transListEl.innerHTML = `No transactions yet`;
+    transListEl.innerHTML = `<div style="padding:12px;text-align:center;color:#888;">No transactions yet</div>`;
   } else {
-    transListEl.innerHTML = transactions.map(t=>`
-      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;">
-        <div style="display:flex;gap:10px;align-items:center;">
-          <span style="width:36px;height:36px;background:#f5f5f7;border-radius:8px;display:grid;place-items:center;">${t.category==='Food'?'🍔':t.category==='Transport'?'🚗':t.category==='Shopping'?'🛍️':'💡'}</span>
-          <div><b style="font-size:14px;">${t.category}</b><br><small style="color:#888;">${t.date}</small></div>
+    const recent = transactions.slice(0,3);
+    transListEl.innerHTML = recent.map(t=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f0f0f0;">
+        <div style="display:flex;gap:10px;align-items:center;min-width:0;flex:1;">
+          <span style="width:36px;height:36px;background:#f5f5f7;border-radius:8px;display:grid;place-items:center;flex-shrink:0;">${t.category==='Food'?'🍔':t.category==='Transport'?'🚗':t.category==='Shopping'?'🛍️':'💡'}</span>
+          <div style="min-width:0;overflow:hidden;">
+            <b style="font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${t.category}</b>
+            <small style="color:#888;font-size:12px;">${t.date}</small>
+          </div>
+        </div>
+        <b style="color:#c94c4c;flex-shrink:0;margin-left:10px;">-£${t.amount}</b>
+      </div>
+    `).join('');
+  }
+
+  renderBudgetCats();
+  save();
+  updateBellCount();
+}
+
+function renderBudgetCats(){
+  const container = document.getElementById('budgetCats');
+  if(!container) return;
+  const cats = [
+    {name:'Food', icon:'🍔', color:'food', budget:500},
+    {name:'Transport', icon:'🚗', color:'trans', budget:400},
+    {name:'Shopping', icon:'🛍️', color:'shop', budget:600},
+    {name:'Bills', icon:'💡', color:'bills', budget:500},
+  ];
+  container.innerHTML = cats.map(c=>{
+    const spent = transactions.filter(t=> t.category===c.name).reduce((s,t)=>s+t.amount,0);
+    const pct = Math.min(100, Math.round((spent/c.budget)*100));
+    return `
+      <div class="budget-cat ${c.color}">
+        <div class="budget-cat-top">
+          <div class="budget-cat-left">
+            <div class="cat-icon">${c.icon}</div>
+            <div><b>${c.name}</b><small>£${spent} of £${c.budget}</small></div>
+          </div>
+          <div class="budget-cat-right"><strong>${pct}%</strong></div>
+        </div>
+        <div class="progress"><div style="width:${pct}%"></div></div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ===== SEE ALL - SHOW FULL HISTORY =====
+function showFullHistory(){
+  const modal = document.getElementById('historyModal');
+  const list = document.getElementById('fullHistoryList');
+  const countEl = document.getElementById('historyCount');
+  const totalEl = document.getElementById('historyTotal');
+  if(!modal || !list) return;
+  const totalExpenses = transactions.reduce((s,t)=> s+t.amount, 0);
+  if(countEl) countEl.textContent = transactions.length;
+  if(totalEl) totalEl.textContent = `£${totalExpenses.toLocaleString()}`;
+  if(transactions.length === 0){
+    list.innerHTML = `<div style="text-align:center;padding:40px;color:#888;">No transactions yet</div>`;
+  } else {
+    list.innerHTML = transactions.map((t, idx)=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #f5f5f7;">
+        <div style="display:flex;gap:12px;align-items:center;">
+          <span style="width:42px;height:42px;background:#f5f5f7;border-radius:10px;display:grid;place-items:center;font-size:18px;">${t.category==='Food'?'🍔':t.category==='Transport'?'🚗':t.category==='Shopping'?'🛍️':'💡'}</span>
+          <div><b style="font-size:15px;">${t.category}</b><div style="font-size:12px;color:#888;">${t.date} • #${transactions.length-idx}</div></div>
         </div>
         <b style="color:#c94c4c;">-£${t.amount}</b>
       </div>
     `).join('');
   }
-  save();
-  updateBellCount();
+  modal.style.display = 'flex';
 }
 
 // EVENTS
@@ -195,30 +249,41 @@ document.getElementById('addBtn')?.addEventListener('click', ()=>{
   const date = document.getElementById('date').value;
   if(!amount || amount<=0){ alert('Enter valid amount'); return; }
   if(!category){ alert('Choose category'); return; }
+  if(!date){ alert('Choose date'); return; }
   transactions.unshift({amount, category, date});
   document.getElementById('amount').value = '';
+  document.getElementById('category').value = '';
   updateUI();
   showNotif('Purchase Recorded 🛒', `You spent £${amount} on ${category} • ${date}`, 'expense');
 });
 
 document.getElementById('resetBtn')?.addEventListener('click', ()=>{
-  if(confirm('Reset all?')){
+  if(confirm('Reset all? This deletes everything permanently.')){
     income=0; transactions=[]; notifications=[]; localStorage.clear(); updateUI();
     showNotif('System', 'All data cleared', 'info');
   }
 });
 
-// BELL ICON - SHOW STORED NOTIFICATIONS WITH DATE
-document.querySelectorAll('.icon-btn')[0]?.addEventListener('click', ()=>{
-  showNotificationPanel();
+document.getElementById('notifBell')?.addEventListener('click', showNotificationPanel);
+document.querySelectorAll('.icon-btn')[0]?.addEventListener('click', showNotificationPanel);
+
+// SEE ALL CLICK
+document.getElementById('seeAllBtn')?.addEventListener('click', showFullHistory);
+document.getElementById('closeHistory')?.addEventListener('click', ()=>{
+  document.getElementById('historyModal').style.display='none';
+});
+document.getElementById('historyModal')?.addEventListener('click', (e)=>{
+  if(e.target.id==='historyModal') e.currentTarget.style.display='none';
 });
 
+// NAV
 document.querySelectorAll('.nav div[data-page]').forEach(el=>{
   el.addEventListener('click', ()=>{
     document.querySelectorAll('.nav div').forEach(n=> n.classList.remove('active'));
     el.classList.add('active');
     document.querySelectorAll('.page').forEach(p=> p.classList.remove('active'));
-    document.getElementById(el.dataset.page)?.classList.add('active');
+    const target = document.getElementById(el.dataset.page);
+    if(target) target.classList.add('active');
   });
 });
 
