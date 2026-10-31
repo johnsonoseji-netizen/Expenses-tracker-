@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Expense Tracker</title>
-<link rel="stylesheet" href="style.css?v=134">
+<link rel="stylesheet" href="style.css?v=135">
 </head>
 <body>
 
-<!-- AUTH / REGISTRATION PAGE -->
+<!-- AUTH - FIXED BETTER SOLUTION -->
 <div id="auth" class="page active">
   <div class="top" style="text-align:center;padding:40px 16px 30px;border-radius:0 0 32px 32px;">
     <div class="avatar" style="width:72px;height:72px;font-size:36px;margin:0 auto 12px;">💰</div>
@@ -18,21 +18,23 @@
   <div class="section" style="max-width:400px;margin:0 auto;">
     <div class="box box-pad">
       <div style="display:flex;background:#f5f5f7;border-radius:12px;padding:4px;margin-bottom:20px;">
-        <button id="loginTab" class="auth-tab active" style="flex:1;padding:10px;border:none;border-radius:8px;font-weight:700;background:#fff;">Login</button>
+        <button id="loginTab" class="auth-tab active" style="flex:1;padding:10px;border:none;border-radius:8px;font-weight:700;background:#fff;color:#111;">Login</button>
         <button id="registerTab" class="auth-tab" style="flex:1;padding:10px;border:none;border-radius:8px;font-weight:700;background:transparent;color:#888;">Register</button>
       </div>
       <div id="loginForm">
         <div class="label">Email</div>
-        <div class="input-box"><input id="loginEmail" type="email" placeholder="your@email.com"></div>
+        <div class="input-box"><input id="loginEmail" type="email" placeholder="your@email.com" value="princeoseji@gmail.com"></div>
         <div class="label">Password</div>
         <div class="input-box"><input id="loginPass" type="password" placeholder="••••••••"></div>
         <button class="btn" id="loginBtn">Login</button>
+        <p id="authDebug" style="text-align:center;font-size:11px;color:#888;margin-top:12px;"></p>
+        <p style="text-align:center;margin-top:8px"><small id="showAccounts" style="color:#4a90e2;text-decoration:underline;cursor:pointer;">Show accounts on this phone</small></p>
       </div>
       <div id="registerForm" style="display:none;">
-        <div class="label">Full Name (Owner Name)</div>
-        <div class="input-box"><input id="regName" type="text" placeholder="Emmanuel Johnson"></div>
-        <div class="label">Email (Purple part)</div>
-        <div class="input-box"><input id="regEmail" type="email" placeholder="your@email.com"></div>
+        <div class="label">Full Name (Owner Name - Orange arrow)</div>
+        <div class="input-box"><input id="regName" type="text" placeholder="Prince Oseji"></div>
+        <div class="label">Email (Purple arrow)</div>
+        <div class="input-box"><input id="regEmail" type="email" placeholder="princeoseji@gmail.com"></div>
         <div class="label">Password</div>
         <div class="input-box"><input id="regPass" type="password" placeholder="Create password"></div>
         <div class="label">Confirm Password</div>
@@ -45,11 +47,12 @@
 
 <div class="app-header" id="mainHeader" style="display:none;">
   <div class="user-info">
+    <img id="headerAvatarImg" src="" style="width:36px;height:36px;border-radius:50%;object-fit:cover;display:none;">
     <div class="avatar" id="headerAvatar">👤</div>
     <span id="headerName">Expense Tracker</span>
   </div>
   <div class="header-icons">
-    <div class="icon-btn" id="notifBell">🔔<span class="dot"></span></div>
+    <div class="icon-btn" id="notifBell">🔔<span class="dot" style="display:none"></span></div>
     <div class="icon-btn">⚙️</div>
   </div>
 </div>
@@ -174,7 +177,7 @@
       <div class="setting-item" id="profileResetBtn" style="color:#c94c4c;"><div class="setting-left"><span class="setting-icon" style="background:#ffebee;">🗑️</span><b style="color:#c94c4c;">Reset All Data</b></div><span>›</span></div>
       <div class="setting-item" id="logoutBtn"><div class="setting-left"><span class="setting-icon" style="background:#fff3e0;">🚪</span><b>Logout</b></div><span>›</span></div>
     </div>
-    <div class="box mt20 center" style="color:#888;font-size:13px;">Expense Tracker v1.3.4<br>Built with ❤️ in Nigeria</div>
+    <div class="box mt20 center" style="color:#888;font-size:13px;">Expense Tracker v1.3.5<br>Built with ❤️ in Nigeria</div>
   </div>
 </div>
 
@@ -194,6 +197,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="app.js?v=134"></script>
+<script src="app.js?v=135"></script>
 </body>
 </html>
