@@ -1,0 +1,16 @@
+{
+  "name": "Expense Tracker - by Prince Oseji",
+  "short_name": "Expenses",
+  "start_url": "/Expenses-tracker-/",
+  "display": "standalone",
+  "background_color": "#2962ff",
+  "theme_color": "#2962ff",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
