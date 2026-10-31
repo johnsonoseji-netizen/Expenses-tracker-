@@ -1,4 +1,4 @@
-// ===== EXPENSE TRACKER - FINAL CORRECTED WITH SEE ALL + STORED NOTIFICATIONS =====
+// ===== EXPENSE TRACKER - FIXED BUDGET RIGHT SIDE =====
 let income = parseFloat(localStorage.getItem('income')) || 0;
 let transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
 let notifications = JSON.parse(localStorage.getItem('notifications') || '[]');
@@ -187,7 +187,20 @@ function renderBudgetCats(){
   container.innerHTML = cats.map(c=>{
     const spent = transactions.filter(t=> t.category===c.name).reduce((s,t)=>s+t.amount,0);
     const pct = Math.min(100, Math.round((spent/c.budget)*100));
-    return `<div class="budget-cat ${c.color}"><div class="budget-cat-top"><div class="budget-cat-left"><div class="cat-icon">${c.icon}</div><div><b>${c.name}</b><small>£${spent} of £${c.budget}</small></div></div><div class="budget-cat-right"><strong>${pct}%</strong></div></div><div class="progress"><div style="width:${pct}%"></div></div></div>`;
+    // FIXED: £0 of £400 now at brightside, % on left
+    return `<div class="budget-cat ${c.color}">
+      <div class="budget-cat-top">
+        <div class="budget-cat-left">
+          <div class="cat-icon">${c.icon}</div>
+          <div>
+            <b>${c.name}</b>
+            <small>${pct}%</small>
+          </div>
+        </div>
+        <div class="budget-cat-right">£${spent} of £${c.budget}</div>
+      </div>
+      <div class="progress"><div style="width:${pct}%"></div></div>
+    </div>`;
   }).join('');
 }
 
