@@ -4,6 +4,9 @@ try { transactions = JSON.parse(localStorage.getItem('transactions') || '[]'); }
 let notifications = [];
 try { notifications = JSON.parse(localStorage.getItem('notifications') || '[]'); } catch(e){ notifications = []; }
 
+let donutChartInstance = null;
+let barChartInstance = null;
+
 document.addEventListener('DOMContentLoaded', function(){
   const totalBalEl = document.getElementById('totalBal');
   const incomeValEl = document.getElementById('incomeVal');
@@ -23,12 +26,7 @@ document.addEventListener('DOMContentLoaded', function(){
     const dot = document.querySelector('.dot');
     if(!dot) return;
     const unread = notifications.filter(function(n){return !n.read;}).length;
-    if(unread>0){
-      dot.style.display='grid';
-      dot.textContent = unread>9?'9+':unread;
-    } else {
-      dot.style.display='none';
-    }
+    if(unread>0){ dot.style.display='grid'; dot.textContent = unread>9?'9+':unread; } else { dot.style.display='none'; }
   }
 
   function showNotif(title, body){
@@ -57,146 +55,66 @@ document.addEventListener('DOMContentLoaded', function(){
     for(let i=0;i<cats.length;i++){
       const c = cats[i];
       let spent = 0;
-      for(let j=0;j<transactions.length;j++){
-        if(transactions[j].category===c.name) spent += parseFloat(transactions[j].amount)||0;
-      }
+      for(let j=0;j<transactions.length;j++){ if(transactions[j].category===c.name) spent += parseFloat(transactions[j].amount)||0; }
       const pct = c.budget>0 ? Math.min(100, Math.round((spent/c.budget)*100)) : 0;
       html += '<div class="budget-cat '+c.color+'"><div class="budget-cat-top"><div class="budget-cat-left"><div class="cat-icon">'+c.icon+'</div><div><b>'+c.name+'</b><small>'+pct+'%</small></div></div><div class="budget-cat-right">₦'+spent+' of ₦'+c.budget+'</div></div><div class="progress"><div style="width:'+pct+'%"></div></div></div>';
     }
     container.innerHTML = html;
   }
 
-  function updateUI(){
-    let totalExpenses = 0;
-    for(let i=0;i<transactions.length;i++){ totalExpenses += parseFloat(transactions[i].amount)||0; }
-    const totalBalance = income - totalExpenses;
-    if(totalBalEl) totalBalEl.textContent = '₦'+totalBalance.toLocaleString();
-    if(incomeValEl) incomeValEl.textContent = '+₦'+income.toLocaleString();
-    if(expValEl) expValEl.textContent = '-₦'+totalExpenses.toLocaleString();
-    const bSpent = document.getElementById('bSpent');
-    const bRem = document.getElementById('bRem');
-    const bProg = document.getElementById('bProg');
-    const bIncome = document.getElementById('bIncome');
-    const bExp = document.getElementById('bExp');
-    const tipPct = document.getElementById('tipPct');
-    if(bSpent) bSpent.textContent = '₦'+totalExpenses.toLocaleString();
-    if(bRem) bRem.textContent = '₦'+(2000-totalExpenses).toLocaleString();
-    if(bProg) bProg.style.width = Math.min(100, Math.round((totalExpenses/2000)*100))+'%';
-    if(bIncome) bIncome.textContent = '₦'+income.toLocaleString();
-    if(bExp) bExp.textContent = '₦'+totalExpenses.toLocaleString();
-    if(tipPct) tipPct.textContent = Math.min(100, Math.round((totalExpenses/2000)*100))+'%';
-    if(transactions.length===0){
-      if(transListEl) transListEl.innerHTML = '<div style="padding:12px;text-align:center;color:#888;">No transactions yet</div>';
-    } else {
-      const recent = transactions.slice(0,3);
-      let tHtml = '';
-      for(let i=0;i<recent.length;i++){
-        const t = recent[i];
-        const icon = t.category==='Food'?'🍔':t.category==='Transport'?'🚗':t.category==='Shopping'?'🛍️':'💡';
-        tHtml += '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f0f0f0;"><div style="display:flex;gap:10px;align-items:center;"><span style="width:36px;height:36px;background:#f5f5f7;border-radius:8px;display:grid;place-items:center;">'+icon+'</span><div><b style="font-size:14px;">'+t.category+'</b><div style="font-size:12px;color:#888;">'+t.date+'</div></div></div><b style="color:#c94c4c;">-₦'+t.amount+'</b></div>';
-      }
-      if(transListEl) transListEl.innerHTML = tHtml;
+  function renderAnalysisCharts(){
+    const donutEl = document.getElementById('donutChart');
+    const barEl = document.getElementById('barChart');
+    const aTotal = document.getElementById('aTotal');
+    const aAvg = document.getElementById('aAvg');
+    if(!donutEl || !barEl) return;
+    if(typeof Chart === 'undefined'){ console.log('Chart.js not loaded'); return; }
+
+    let food=0, trans=0, shop=0, bills=0, total=0;
+    for(let i=0;i<transactions.length;i++){
+      const t = transactions[i];
+      const amt = parseFloat(t.amount)||0;
+      total+=amt;
+      if(t.category==='Food') food+=amt;
+      else if(t.category==='Transport') trans+=amt;
+      else if(t.category==='Shopping') shop+=amt;
+      else if(t.category==='Bills') bills+=amt;
     }
-    renderBudgetCats();
-    save();
-    updateBellCount();
-  }
 
-  function showFullHistory(){
-    const modal = document.getElementById('historyModal');
-    const list = document.getElementById('fullHistoryList');
-    const countEl = document.getElementById('historyCount');
-    const totalEl = document.getElementById('historyTotal');
-    if(!modal || !list) return;
-    let totalExpenses = 0;
-    for(let i=0;i<transactions.length;i++){ totalExpenses += parseFloat(transactions[i].amount)||0; }
-    if(countEl) countEl.textContent = transactions.length;
-    if(totalEl) totalEl.textContent = '₦'+totalExpenses.toLocaleString();
-    if(transactions.length===0){
-      list.innerHTML = '<div style="text-align:center;padding:40px;color:#888;">No transactions yet</div>';
-    } else {
-      let hHtml = '';
-      for(let i=0;i<transactions.length;i++){
-        const t = transactions[i];
-        const icon = t.category==='Food'?'🍔':t.category==='Transport'?'🚗':t.category==='Shopping'?'🛍️':'💡';
-        hHtml += '<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #f5f5f7;"><div style="display:flex;gap:12px;align-items:center;"><span style="width:42px;height:42px;background:#f5f5f7;border-radius:10px;display:grid;place-items:center;">'+icon+'</span><div><b>'+t.category+'</b><div style="font-size:12px;color:#888;">'+t.date+'</div></div></div><b style="color:#c94c4c;">-₦'+t.amount+'</b></div>';
-      }
-      list.innerHTML = hHtml;
-    }
-    modal.style.display = 'flex';
-  }
+    if(aTotal) aTotal.textContent = '₦'+total.toLocaleString();
+    if(aAvg) aAvg.textContent = '₦'+(transactions.length>0 ? Math.round(total/transactions.length).toLocaleString() : '0');
 
-  const setSalaryBtn = document.getElementById('setSalary');
-  if(setSalaryBtn){
-    setSalaryBtn.addEventListener('click', function(){
-      const val = parseFloat(salaryInput.value);
-      if(!val || val<=0){ alert('Enter valid salary'); return; }
-      income += val;
-      salaryInput.value = '';
-      updateUI();
-      showNotif('Salary Received!','₦'+val.toLocaleString()+' added');
-    });
-  }
+    if(donutChartInstance){ donutChartInstance.destroy(); donutChartInstance=null; }
+    if(barChartInstance){ barChartInstance.destroy(); barChartInstance=null; }
 
-  const addBtn = document.getElementById('addBtn');
-  if(addBtn){
-    addBtn.addEventListener('click', function(){
-      const amountEl = document.getElementById('amount');
-      const catEl = document.getElementById('category');
-      const dateEl = document.getElementById('date');
-      const amount = parseFloat(amountEl.value);
-      const category = catEl.value;
-      const date = dateEl.value;
-      if(!amount || amount<=0){ alert('Enter valid amount'); return; }
-      if(!category){ alert('Choose category'); return; }
-      if(!date){ alert('Choose date'); return; }
-      transactions.unshift({amount:amount, category:category, date:date});
-      amountEl.value = '';
-      catEl.value = '';
-      updateUI();
-      showNotif('Purchase Recorded','₦'+amount+' on '+category);
-    });
-  }
+    const dataValues = [food, trans, shop, bills];
+    const hasData = dataValues.some(v=>v>0);
+    const finalData = hasData ? dataValues : [30, 20, 25, 15];
 
-  const resetBtn = document.getElementById('resetBtn');
-  if(resetBtn){
-    resetBtn.addEventListener('click', function(){
-      if(confirm('Reset all?')){
-        income=0; transactions=[]; notifications=[];
-        localStorage.clear();
-        updateUI();
+    donutChartInstance = new Chart(donutEl, {
+      type:'doughnut',
+      data:{
+        labels:['Food','Transport','Shopping','Bills'],
+        datasets:[{data:finalData, backgroundColor:['#ff7a00','#4a90e2','#e94e9a','#4caf50'], borderWidth:0}]
+      },
+      options:{
+        cutout:'65%',
+        plugins:{legend:{display:false}},
+        responsive:true,
+        maintainAspectRatio:false
       }
     });
-  }
 
-  const bell = document.getElementById('notifBell');
-  if(bell){
-    bell.addEventListener('click', function(){
-      if(notifications.length===0){ alert('No notifications yet'); return; }
-      let msg = '';
-      for(let i=0;i<notifications.length;i++){ msg += notifications[i].title+' - '+notifications[i].body+'\n'; }
-      alert(msg);
-      notifications.forEach(function(n){ n.read=true; });
-      save(); updateBellCount();
-    });
-  }
-
-  const seeAllBtn = document.getElementById('seeAllBtn');
-  if(seeAllBtn) seeAllBtn.addEventListener('click', showFullHistory);
-  const closeHistoryBtn = document.getElementById('closeHistory');
-  if(closeHistoryBtn) closeHistoryBtn.addEventListener('click', function(){ document.getElementById('historyModal').style.display='none'; });
-  const historyModal = document.getElementById('historyModal');
-  if(historyModal) historyModal.addEventListener('click', function(e){ if(e.target.id==='historyModal') e.currentTarget.style.display='none'; });
-
-  document.querySelectorAll('.nav div[data-page]').forEach(function(el){
-    el.addEventListener('click', function(){
-      document.querySelectorAll('.nav div').forEach(function(n){ n.classList.remove('active'); });
-      el.classList.add('active');
-      document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
-      const target = document.getElementById(el.dataset.page);
-      if(target) target.classList.add('active');
-    });
-  });
-
-  updateUI();
-});
+    barChartInstance = new Chart(barEl, {
+      type:'bar',
+      data:{
+        labels:['Food','Transport','Shopping','Bills'],
+        datasets:[{label:'Spent', data:dataValues, backgroundColor:'#4a90e2', borderRadius:6, barThickness:30}]
+      },
+      options:{
+        plugins:{legend:{display:false}},
+        scales:{
+          y:{beginAtZero:true, grid:{display:false}, ticks:{display:false}},
+          x:{grid:{display:false}}
+        },
+        responsive:true,
