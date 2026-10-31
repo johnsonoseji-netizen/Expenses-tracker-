@@ -1,4 +1,4 @@
-// EXPENSE TRACKER v137 - FULL - NO HALF
+// EXPENSE TRACKER v142 - FULL FIXED - IMAGES RESTORED
 let transactions = [];
 let salary = 0;
 let donutChart, barChart;
@@ -36,6 +36,7 @@ function checkAuth(){
     const emailEl=document.getElementById('ownerEmailDisplay'); if(emailEl) emailEl.textContent=user.email;
     const headerName=document.getElementById('headerName'); if(headerName) headerName.textContent=user.name;
     const sinceEl=document.getElementById('ownerSince'); if(sinceEl) sinceEl.textContent='Member since '+(user.since||2024);
+    loadUserData();
   } else {
     if(auth){ auth.style.display='block'; auth.classList.add('active'); }
     if(header) header.style.display='none';
@@ -52,13 +53,15 @@ const registerForm=document.getElementById('registerForm');
 if(loginTab){
   loginTab.onclick=()=>{
     loginTab.classList.add('active'); registerTab.classList.remove('active');
-    loginForm.style.display='block'; registerForm.style.display='none';
+    if(loginForm) loginForm.style.display='block'; 
+    if(registerForm) registerForm.style.display='none';
   };
 }
 if(registerTab){
   registerTab.onclick=()=>{
     registerTab.classList.add('active'); loginTab.classList.remove('active');
-    loginForm.style.display='none'; registerForm.style.display='block';
+    if(loginForm) loginForm.style.display='none'; 
+    if(registerForm) registerForm.style.display='block';
   };
 }
 
@@ -146,6 +149,7 @@ if(resetBtn) resetBtn.onclick=()=>{ if(confirm('Reset all?')){ transactions=[]; 
 const profileResetBtn=document.getElementById('profileResetBtn');
 if(profileResetBtn) profileResetBtn.onclick=()=>{ if(confirm('Reset all data?')){ transactions=[]; salary=0; saveData(); updateUI(); } };
 
+// ===== FIXED WITH IMAGES =====
 function updateUI(){
   const totalExp=transactions.reduce((s,t)=>s+t.amount,0);
   const balance=salary-totalExp;
@@ -161,10 +165,13 @@ function updateUI(){
   const pExp=document.getElementById('pExp'); if(pExp) pExp.textContent='-₦'+totalExp.toLocaleString();
   const aTotal=document.getElementById('aTotal'); if(aTotal) aTotal.textContent='₦'+totalExp.toLocaleString();
   const aAvg=document.getElementById('aAvg'); if(aAvg) aAvg.textContent='₦'+(transactions.length?Math.round(totalExp/30):0).toLocaleString();
+  
+  // IMAGE RESTORED HERE - THIS WAS MISSING
   const list=document.getElementById('transList');
+  const icons={Food:'🍔',Transport:'🚌',Shopping:'🛍️',Bills:'💡'};
   if(list){
     if(transactions.length===0) list.innerHTML='No transactions yet';
-    else list.innerHTML=transactions.slice(0,5).map(t=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee"><div><b>${t.category}</b><br><small style="color:#888">${t.date}</small></div><b style="color:#c94c4c">-₦${t.amount}</b></div>`).join('');
+    else list.innerHTML=transactions.slice(0,5).map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee"><div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;background:#f5f5f7;border-radius:10px;display:grid;place-items:center;font-size:18px">${icons[t.category]||'💰'}</span><div><b>${t.category}</b><br><small style="color:#888">${t.date}</small></div></div><b style="color:#c94c4c">-₦${t.amount}</b></div>`).join('');
   }
   const dot=document.querySelector('.dot'); if(dot){ if(transactions.length>0){ dot.style.display='grid'; dot.textContent=transactions.length; } else dot.style.display='none'; }
   updateBudget();
@@ -191,36 +198,23 @@ function renderCharts(){
   const ctx1=document.getElementById('donutChart');
   if(ctx1){
     if(donutChart) donutChart.destroy();
-    donutChart=new Chart(ctx1,{
-      type:'doughnut',
-      data:{
-        labels:Object.keys(cats),
-        datasets:[{data:Object.values(cats), backgroundColor:['#ff7a00','#4a90e2','#e94e9a','#4caf50']}]
-      },
-      options:{responsive:true, plugins:{legend:{display:false}}}
-    });
+    donutChart=new Chart(ctx1,{ type:'doughnut', data:{ labels:Object.keys(cats), datasets:[{data:Object.values(cats), backgroundColor:['#ff7a00','#4a90e2','#e94e9a','#4caf50']}] }, options:{responsive:true, plugins:{legend:{display:false}}} });
   }
   const ctx2=document.getElementById('barChart');
   if(ctx2){
     if(barChart) barChart.destroy();
-    const months={};
-    transactions.forEach(t=>{ const m=t.date.slice(0,7); months[m]=(months[m]||0)+t.amount; });
-    barChart=new Chart(ctx2,{
-      type:'bar',
-      data:{
-        labels:Object.keys(months),
-        datasets:[{label:'Spending', data:Object.values(months), backgroundColor:'#4a90e2'}]
-      },
-      options:{responsive:true, plugins:{legend:{display:false}}}
-    });
+    const months={}; transactions.forEach(t=>{ const m=t.date.slice(0,7); months[m]=(months[m]||0)+t.amount; });
+    barChart=new Chart(ctx2,{ type:'bar', data:{ labels:Object.keys(months), datasets:[{label:'Spending', data:Object.values(months), backgroundColor:'#4a90e2'}] }, options:{responsive:true, plugins:{legend:{display:false}}} });
   }
 }
 
+// IMAGE RESTORED IN HISTORY TOO
 const seeAllBtn=document.getElementById('seeAllBtn');
 if(seeAllBtn) seeAllBtn.onclick=()=>{
   const modal=document.getElementById('historyModal'); if(modal) modal.classList.add('show');
   const list=document.getElementById('fullHistoryList');
-  if(list) list.innerHTML=transactions.length?transactions.map(t=>`<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee"><span><b>${t.category}</b><br><small>${t.date}</small></span><b>₦${t.amount}</b></div>`).join(''):'No history';
+  const icons2={Food:'🍔',Transport:'🚌',Shopping:'🛍️',Bills:'💡'};
+  if(list) list.innerHTML=transactions.length?transactions.map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee"><div style="display:flex;align-items:center;gap:10px"><span style="width:36px;height:36px;background:#f5f5f7;border-radius:10px;display:grid;place-items:center">${icons2[t.category]||'💰'}</span><span><b>${t.category}</b><br><small>${t.date}</small></span></div><b>₦${t.amount}</b></div>`).join(''):'No history';
   const cnt=document.getElementById('historyCount'); if(cnt) cnt.textContent=transactions.length;
   const tot=document.getElementById('historyTotal'); if(tot) tot.textContent='₦'+transactions.reduce((s,t)=>s+t.amount,0);
 };
@@ -246,4 +240,3 @@ if(darkToggle){
 }
 
 checkAuth();
-if(getCurrentUser()) loadUserData();
