@@ -105,7 +105,10 @@
 </div>
 
 <div id="analysis" class="page">
-  <div class="top"><h1 class="page-title">Analysis</h1><p class="page-subtitle">Analytics</p></div>
+  <div class="top">
+    <h1 class="page-title">Analysis</h1>
+    <p class="page-subtitle">Analytics</p>
+  </div>
   <div class="section">
     <div class="box box-pad"><b class="box-title">Spending Breakdown</b><canvas id="donutChart" height="200"></canvas></div>
     <div class="box box-pad" style="margin-top:12px"><b class="box-title">Monthly</b><canvas id="barChart" height="200"></canvas></div>
@@ -117,7 +120,10 @@
 </div>
 
 <div id="profile" class="page">
-  <div class="top"><h1 class="page-title">Profile</h1><p class="page-subtitle">Manage account</p></div>
+  <div class="top">
+    <h1 class="page-title">Profile</h1>
+    <p class="page-subtitle">Manage account</p>
+  </div>
   <div class="section">
     <div class="box box-pad profile-box">
       <div class="avatar profile-avatar">👤</div>
@@ -156,8 +162,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="app.js?v=142"></script>
+<script src="app.js?v=143"></script>
+<script>
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
