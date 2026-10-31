@@ -1,14 +1,13 @@
-<!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Expense Tracker</title>
-<link rel="stylesheet" href="style.css?v=131">
+<link rel="stylesheet" href="style.css?v=138">
 </head>
 <body>
 
-<!-- AUTH / REGISTRATION - ADDED - NO CSS -->
 <div id="auth" class="page active">
   <div class="top">
     <div class="avatar">💰</div>
@@ -17,15 +16,15 @@
   </div>
   <div class="section">
     <div class="box box-pad">
-      <div>
+      <div id="authTabsWrap">
         <button id="loginTab" class="auth-tab active">Login</button>
         <button id="registerTab" class="auth-tab">Register</button>
       </div>
       <div id="loginForm">
         <div class="label">Email</div>
-        <div class="input-box"><input id="loginEmail" type="email" placeholder="princeoseji@gmail.com" value="princeoseji@gmail.com"></div>
+        <div class="input-box"><input id="loginEmail" type="email" value="princeoseji@gmail.com"></div>
         <div class="label">Password</div>
-        <div class="input-box"><input id="loginPass" type="password" placeholder="123456" value="123456"></div>
+        <div class="input-box"><input id="loginPass" type="password" value="123456"></div>
         <button class="btn" id="loginBtn">Login</button>
         <p id="authDebug">Demo: princeoseji@gmail.com / 123456</p>
       </div>
@@ -146,12 +145,7 @@
   </div>
   <div class="section">
     <div class="box box-pad center">
-      <div>
-        <img id="profileImg" src="">
-        <div id="profileAvatar" class="avatar">👤</div>
-        <label for="uploadPic">📷</label>
-      </div>
-      <input type="file" id="uploadPic" accept="image/*" hidden>
+      <div class="avatar">👤</div>
       <b id="ownerNameDisplay">Expense Tracker</b>
       <small id="ownerEmailDisplay">expense@tracker.com</small>
       <small id="ownerSince">Member since 2024</small>
@@ -201,7 +195,7 @@
       </div>
     </div>
     <div class="box mt20 center">
-      Expense Tracker v1.3.1<br>Built with ❤️ in Nigeria
+      Expense Tracker v1.3.8<br>Built with ❤️ in Nigeria
     </div>
   </div>
 </div>
@@ -228,77 +222,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="app.js?v=135"></script>
+<script src="app.js?v=138"></script>
 </body>
-</html> 
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Expense Tracker</title>
-</head>
-<body>
-
-<!-- AUTH PAGE -->
-<div id="auth" class="page active">
-  <div class="top">
-    <div class="avatar">💰</div>
-    <h1 class="page-title">Expense Tracker</h1>
-    <p class="page-subtitle">Manage your money smartly</p>
-  </div>
-  <div class="section">
-    <div class="box box-pad">
-      <div>
-        <button id="loginTab" class="auth-tab active">Login</button>
-        <button id="registerTab" class="auth-tab">Register</button>
-      </div>
-      <div id="loginForm">
-        <div class="label">Email</div>
-        <div class="input-box"><input id="loginEmail" type="email" placeholder="princeoseji@gmail.com" value="princeoseji@gmail.com"></div>
-        <div class="label">Password</div>
-        <div class="input-box"><input id="loginPass" type="password" placeholder="123456" value="123456"></div>
-        <button class="btn" id="loginBtn">Login</button>
-        <p id="authDebug">Demo: princeoseji@gmail.com / 123456</p>
-      </div>
-      <div id="registerForm">
-        <div class="label">Full Name (Owner Name)</div>
-        <div class="input-box"><input id="regName" type="text" placeholder="Prince Oseji"></div>
-        <div class="label">Email</div>
-        <div class="input-box"><input id="regEmail" type="email" placeholder="princeoseji@gmail.com"></div>
-        <div class="label">Password</div>
-        <div class="input-box"><input id="regPass" type="password" placeholder="Create password"></div>
-        <div class="label">Confirm Password</div>
-        <div class="input-box"><input id="regPass2" type="password" placeholder="Confirm password"></div>
-        <button class="btn" id="registerBtn">Create Account</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="app-header" id="mainHeader">
-  <div class="user-info">
-    <img id="headerAvatarImg" src="">
-    <div class="avatar" id="headerAvatar">👤</div>
-    <span id="headerName">Expense Tracker</span>
-  </div>
-  <div class="header-icons">
-    <div class="icon-btn" id="notifBell">🔔<span class="dot"></span></div>
-    <div class="icon-btn">⚙️</div>
-  </div>
-</div>
-
-<div id="home" class="page">
-  <div class="top">
-    <small>Total balance</small>
-    <h1 id="totalBal">₦0</h1>
-    <div class="salary-box">
-      <span class="salary-icon">💰</span>
-      <input id="salaryInput" type="number" placeholder="Enter salary e.g 5000">
-      <button id="setSalary">Set Salary</button>
-    </div>
-    <div class="cards">
-      <div class="card in"><span>↗</span><div><b>income</b><strong id="incomeVal">+₦0</strong></div></div>
-      <div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="expVal">-₦0</strong></div></div>
-    </div>
-  </div>
-  <div
+</html>
