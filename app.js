@@ -1,4 +1,4 @@
-// EXPENSE TRACKER v144 - NOTIFICATION FIXED + ANIMATION
+// EXPENSE TRACKER v145 - DARK MODE FIXED + NOTIFICATIONS
 let transactions = [];
 let salary = 0;
 let donutChart, barChart;
@@ -16,7 +16,38 @@ let notifications = [];
 function getCurrentUser(){ try{ return JSON.parse(localStorage.getItem('currentUser')||'null'); }catch(e){ return null; } }
 function getUserKey(k){ const u=getCurrentUser(); return u?`${k}_${u.email.toLowerCase()}`:k; }
 
-// ===== NOTIFICATION SYSTEM FIXED =====
+// ===== DARK MODE CSS INJECT - FIXES YOUR ISSUE =====
+(function injectDarkModeCSS(){
+  if(document.getElementById('darkModeFix')) return;
+  const s=document.createElement('style');
+  s.id='darkModeFix';
+  s.innerHTML=`
+    body.dark{ background:#121212 !important; color:#e0e0e0 !important; }
+    body.dark .top, body.dark .budget-top{ background:#1e1e1e !important; }
+    body.dark .section, body.dark .box, body.dark .input-box, body.dark .salary-box, body.dark .history-container, body.dark #notifPanel{ background:#1e1e1e !important; color:#e0e0e0 !important; border-color:#333 !important; }
+    body.dark .page-title, body.dark b, body.dark h1, body.dark h2, body.dark .form-title, body.dark .section-title span, body.dark .box-title{ color:#f5f5f5 !important; }
+    body.dark small, body.dark .page-subtitle, body.dark .label{ color:#aaa !important; }
+    body.dark input, body.dark select{ background:#2a2a2a !important; color:white !important; border-color:#444 !important; }
+    body.dark .card.in{ background:#1a3a5a !important; }
+    body.dark .card.ex{ background:#5a1a1a !important; }
+    body.dark .nav{ background:#1e1e1e !important; border-top:1px solid #333 !important; }
+    body.dark .nav div{ color:#aaa !important; }
+    body.dark .nav div.active{ color:#4a90e2 !important; }
+    body.dark .app-header{ background:#1e1e1e !important; }
+    body.dark .setting-item{ border-bottom:1px solid #333 !important; }
+    body.dark #historyModal{ background:rgba(0,0,0,0.7) !important; }
+    body.dark .progress{ background:#333 !important; }
+    @keyframes slideDown{ from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
+    @keyframes slideIn{ from{transform:translateX(20px);opacity:0} to{transform:translateX(0);opacity:1} }
+    @keyframes bellRing{ 0%,100%{transform:rotate(0)} 20%{transform:rotate(-15deg)} 40%{transform:rotate(15deg)} 60%{transform:rotate(-10deg)} 80%{transform:rotate(10deg)} }
+    @keyframes popIn{ 0%{transform:scale(0)} 50%{transform:scale(1.3)} 100%{transform:scale(1)} }
+    #notifPanel{animation: slideDown 0.35s ease}
+    #notifOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:9998;display:none}
+  `;
+  document.head.appendChild(s);
+})();
+
+// ===== NOTIFICATION SYSTEM =====
 function loadNotifs(){
   try{ notifications=JSON.parse(localStorage.getItem(getUserKey('notifications'))||'[]'); }catch(e){ notifications=[]; }
   updateNotifUI();
@@ -30,7 +61,6 @@ function addNotif(msg){
   if(notifications.length>30) notifications=notifications.slice(0,30);
   saveNotifs();
   updateNotifUI();
-  // Bell animation
   const bell=document.getElementById('notifBell');
   if(bell){ bell.style.animation='bellRing 0.5s'; setTimeout(()=>bell.style.animation='',600); }
 }
@@ -38,39 +68,23 @@ function updateNotifUI(){
   const dot=document.querySelector('.dot');
   const count=notifications.length;
   if(dot){
-    if(count>0){ 
-      dot.style.display='grid'; 
-      dot.textContent=count>9?'9+':count;
-      dot.style.animation='popIn 0.3s';
-    } else dot.style.display='none';
+    if(count>0){ dot.style.display='grid'; dot.textContent=count>9?'9+':count; dot.style.animation='popIn 0.3s'; }
+    else dot.style.display='none';
   }
   const list=document.getElementById('notifList');
   const countEl=document.getElementById('notifCountBadge');
   if(countEl) countEl.textContent=count;
   if(list){
     if(notifications.length===0) list.innerHTML='<p style="padding:30px;text-align:center;color:#888">No notifications yet<br><small>Add transaction to see here</small></p>';
-    else list.innerHTML=notifications.map(n=>`<div style="padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;gap:12px;animation: slideIn 0.3s"><div style="width:36px;height:36px;background:#f0f7ff;border-radius:10px;display:grid;place-items:center;flex-shrink:0">🔔</div><div style="flex:1"><div style="font-size:14px;font-weight:500;color:#222;line-height:1.4">${n.msg}</div><small style="color:#888;font-size:12px">${n.time}</small></div></div>`).join('');
+    else list.innerHTML=notifications.map(n=>`<div style="padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;gap:12px;animation: slideIn 0.3s"><div style="width:36px;height:36px;background:#f0f7ff;border-radius:10px;display:grid;place-items:center;flex-shrink:0">🔔</div><div style="flex:1"><div style="font-size:14px;font-weight:500;line-height:1.4">${n.msg}</div><small style="color:#888;font-size:12px">${n.time}</small></div></div>`).join('');
   }
 }
 function initNotifPanel(){
   if(document.getElementById('notifPanel')) return;
-  // Inject CSS animation
-  const style=document.createElement('style');
-  style.innerHTML=`
-    @keyframes slideDown{ from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
-    @keyframes slideIn{ from{transform:translateX(20px);opacity:0} to{transform:translateX(0);opacity:1} }
-    @keyframes bellRing{ 0%,100%{transform:rotate(0)} 20%{transform:rotate(-15deg)} 40%{transform:rotate(15deg)} 60%{transform:rotate(-10deg)} 80%{transform:rotate(10deg)} }
-    @keyframes popIn{ 0%{transform:scale(0)} 50%{transform:scale(1.3)} 100%{transform:scale(1)} }
-    #notifPanel{animation: slideDown 0.35s ease}
-    #notifOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:9998;display:none}
-  `;
-  document.head.appendChild(style);
-  
   const overlay=document.createElement('div');
   overlay.id='notifOverlay';
   overlay.onclick=()=>{ document.getElementById('notifPanel').style.display='none'; overlay.style.display='none'; };
   document.body.appendChild(overlay);
-
   const panel=document.createElement('div');
   panel.id='notifPanel';
   panel.innerHTML=`
@@ -82,11 +96,9 @@ function initNotifPanel(){
   `;
   panel.style.cssText='position:fixed;top:70px;right:12px;left:12px;max-width:360px;margin-left:auto;background:white;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.25);z-index:9999;display:none;';
   document.body.appendChild(panel);
-  
   const bell=document.getElementById('notifBell');
   if(bell){
     bell.style.cursor='pointer';
-    bell.style.transition='transform 0.2s';
     bell.onclick=()=>{
       const p=document.getElementById('notifPanel');
       const o=document.getElementById('notifOverlay');
@@ -101,9 +113,7 @@ function initNotifPanel(){
     document.getElementById('notifOverlay').style.display='none';
   };
   document.getElementById('clearNotifs').onclick=()=>{
-    if(confirm('Clear all notifications?')){
-      notifications=[]; saveNotifs(); updateNotifUI();
-    }
+    if(confirm('Clear all notifications?')){ notifications=[]; saveNotifs(); updateNotifUI(); }
   };
 }
 
