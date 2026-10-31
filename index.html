@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Expense Tracker</title>
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="style.css?v=140">
+<link rel="stylesheet" href="style.css?v=142">
 </head>
 <body>
 
@@ -29,7 +29,7 @@
         <button class="btn" id="loginBtn">Login</button>
         <p id="authDebug">Demo: princeoseji@gmail.com / 123456</p>
       </div>
-      <div id="registerForm">
+      <div id="registerForm" style="display:none">
         <div class="label">Full Name</div>
         <div class="input-box"><input id="regName" type="text" placeholder="Prince Oseji"></div>
         <div class="label">Email</div>
@@ -44,13 +44,13 @@
   </div>
 </div>
 
-<div class="app-header" id="mainHeader">
+<div class="app-header" id="mainHeader" style="display:none">
   <div class="user-info">
     <div class="avatar" id="headerAvatar">👤</div>
     <span id="headerName">Expense Tracker</span>
   </div>
   <div class="header-icons">
-    <div class="icon-btn" id="notifBell">🔔<span class="dot"></span></div>
+    <div class="icon-btn" id="notifBell">🔔<span class="dot" style="display:none"></span></div>
     <div class="icon-btn">⚙️</div>
   </div>
 </div>
@@ -105,10 +105,7 @@
 </div>
 
 <div id="analysis" class="page">
-  <div class="top">
-    <h1 class="page-title">Analysis</h1>
-    <p class="page-subtitle">Analytics</p>
-  </div>
+  <div class="top"><h1 class="page-title">Analysis</h1><p class="page-subtitle">Analytics</p></div>
   <div class="section">
     <div class="box box-pad"><b class="box-title">Spending Breakdown</b><canvas id="donutChart" height="200"></canvas></div>
     <div class="box box-pad" style="margin-top:12px"><b class="box-title">Monthly</b><canvas id="barChart" height="200"></canvas></div>
@@ -120,15 +117,12 @@
 </div>
 
 <div id="profile" class="page">
-  <div class="top">
-    <h1 class="page-title">Profile</h1>
-    <p class="page-subtitle">Manage account</p>
-  </div>
+  <div class="top"><h1 class="page-title">Profile</h1><p class="page-subtitle">Manage account</p></div>
   <div class="section">
     <div class="box box-pad profile-box">
       <div class="avatar profile-avatar">👤</div>
       <b id="ownerNameDisplay">Prince Oseji</b>
-      <small id="ownerEmailDisplay">example@gmail.com</small>
+      <small id="ownerEmailDisplay"></small>
       <small id="ownerSince">Member since 2024</small>
     </div>
     <div class="cards profile-cards">
@@ -146,7 +140,7 @@
   </div>
 </div>
 
-<div class="nav" id="mainNav">
+<div class="nav" id="mainNav" style="display:none">
   <div class="active" data-page="home"><span>🏠</span>Home</div>
   <div data-page="budget"><span>📊</span>Budget</div>
   <div data-page="analysis"><span>🎯</span>Analysis</div>
@@ -162,6 +156,11 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-     <script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js');}</script>
+<script src="script.js?v=142"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
 </body>
 </html>
