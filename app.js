@@ -1,4 +1,4 @@
-// EXPENSE TRACKER v143 - WITH BELL NOTIFICATIONS
+// EXPENSE TRACKER v144 - NOTIFICATION FIXED + ANIMATION
 let transactions = [];
 let salary = 0;
 let donutChart, barChart;
@@ -16,7 +16,7 @@ let notifications = [];
 function getCurrentUser(){ try{ return JSON.parse(localStorage.getItem('currentUser')||'null'); }catch(e){ return null; } }
 function getUserKey(k){ const u=getCurrentUser(); return u?`${k}_${u.email.toLowerCase()}`:k; }
 
-// ===== NOTIFICATION SYSTEM =====
+// ===== NOTIFICATION SYSTEM FIXED =====
 function loadNotifs(){
   try{ notifications=JSON.parse(localStorage.getItem(getUserKey('notifications'))||'[]'); }catch(e){ notifications=[]; }
   updateNotifUI();
@@ -27,49 +27,83 @@ function saveNotifs(){
 function addNotif(msg){
   const now = new Date().toLocaleString();
   notifications.unshift({id:Date.now(), msg, time: now});
-  if(notifications.length>20) notifications=notifications.slice(0,20);
+  if(notifications.length>30) notifications=notifications.slice(0,30);
   saveNotifs();
   updateNotifUI();
+  // Bell animation
+  const bell=document.getElementById('notifBell');
+  if(bell){ bell.style.animation='bellRing 0.5s'; setTimeout(()=>bell.style.animation='',600); }
 }
 function updateNotifUI(){
   const dot=document.querySelector('.dot');
   const count=notifications.length;
   if(dot){
-    if(count>0){ dot.style.display='grid'; dot.textContent=count>9?'9+':count; }
-    else dot.style.display='none';
+    if(count>0){ 
+      dot.style.display='grid'; 
+      dot.textContent=count>9?'9+':count;
+      dot.style.animation='popIn 0.3s';
+    } else dot.style.display='none';
   }
   const list=document.getElementById('notifList');
+  const countEl=document.getElementById('notifCountBadge');
+  if(countEl) countEl.textContent=count;
   if(list){
-    if(notifications.length===0) list.innerHTML='<p style="padding:20px;text-align:center;color:#888">No notifications</p>';
-    else list.innerHTML=notifications.map(n=>`<div style="padding:12px;border-bottom:1px solid #eee"><div style="font-size:14px">${n.msg}</div><small style="color:#888">${n.time}</small></div>`).join('');
+    if(notifications.length===0) list.innerHTML='<p style="padding:30px;text-align:center;color:#888">No notifications yet<br><small>Add transaction to see here</small></p>';
+    else list.innerHTML=notifications.map(n=>`<div style="padding:14px 16px;border-bottom:1px solid #f0f0f0;display:flex;gap:12px;animation: slideIn 0.3s"><div style="width:36px;height:36px;background:#f0f7ff;border-radius:10px;display:grid;place-items:center;flex-shrink:0">🔔</div><div style="flex:1"><div style="font-size:14px;font-weight:500;color:#222;line-height:1.4">${n.msg}</div><small style="color:#888;font-size:12px">${n.time}</small></div></div>`).join('');
   }
 }
 function initNotifPanel(){
   if(document.getElementById('notifPanel')) return;
+  // Inject CSS animation
+  const style=document.createElement('style');
+  style.innerHTML=`
+    @keyframes slideDown{ from{transform:translateY(-20px);opacity:0} to{transform:translateY(0);opacity:1} }
+    @keyframes slideIn{ from{transform:translateX(20px);opacity:0} to{transform:translateX(0);opacity:1} }
+    @keyframes bellRing{ 0%,100%{transform:rotate(0)} 20%{transform:rotate(-15deg)} 40%{transform:rotate(15deg)} 60%{transform:rotate(-10deg)} 80%{transform:rotate(10deg)} }
+    @keyframes popIn{ 0%{transform:scale(0)} 50%{transform:scale(1.3)} 100%{transform:scale(1)} }
+    #notifPanel{animation: slideDown 0.35s ease}
+    #notifOverlay{position:fixed;inset:0;background:rgba(0,0,0,0.3);z-index:9998;display:none}
+  `;
+  document.head.appendChild(style);
+  
+  const overlay=document.createElement('div');
+  overlay.id='notifOverlay';
+  overlay.onclick=()=>{ document.getElementById('notifPanel').style.display='none'; overlay.style.display='none'; };
+  document.body.appendChild(overlay);
+
   const panel=document.createElement('div');
   panel.id='notifPanel';
   panel.innerHTML=`
-    <div id="notifHeader" style="display:flex;justify-content:space-between;align-items:center;padding:14px;border-bottom:1px solid #eee">
-      <b>Notifications</b>
-      <div><button id="clearNotifs" style="margin-right:8px;border:none;background:#f5f5f5;padding:6px 10px;border-radius:8px">Clear</button><button id="closeNotif" style="border:none;background:none;font-size:18px">✕</button></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px;border-bottom:1px solid #eee;background:#fafafa;border-radius:16px 16px 0 0">
+      <div><b style="font-size:16px">Notifications</b> <span id="notifCountBadge" style="background:#0a53a5;color:white;padding:2px 8px;border-radius:10px;font-size:12px;margin-left:6px">0</span></div>
+      <div style="display:flex;gap:8px"><button id="clearNotifs" style="border:none;background:#eee;padding:6px 12px;border-radius:20px;font-size:13px">Clear all</button><button id="closeNotif" style="border:none;background:#f0f0f0;width:32px;height:32px;border-radius:50%;font-size:16px">✕</button></div>
     </div>
-    <div id="notifList" style="max-height:300px;overflow:auto"></div>
+    <div id="notifList" style="max-height:65vh;overflow:auto;background:white;border-radius:0 0 16px 16px"></div>
   `;
-  panel.style.cssText='position:fixed;top:60px;right:10px;width:300px;background:white;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9999;display:none;';
+  panel.style.cssText='position:fixed;top:70px;right:12px;left:12px;max-width:360px;margin-left:auto;background:white;border-radius:16px;box-shadow:0 12px 40px rgba(0,0,0,0.25);z-index:9999;display:none;';
   document.body.appendChild(panel);
   
   const bell=document.getElementById('notifBell');
   if(bell){
     bell.style.cursor='pointer';
+    bell.style.transition='transform 0.2s';
     bell.onclick=()=>{
       const p=document.getElementById('notifPanel');
-      p.style.display=p.style.display==='none' || !p.style.display || p.style.display==='' ? 'block':'none';
-      updateNotifUI();
+      const o=document.getElementById('notifOverlay');
+      const isHidden=p.style.display==='none' || p.style.display==='';
+      p.style.display=isHidden?'block':'none';
+      o.style.display=isHidden?'block':'none';
+      if(isHidden) updateNotifUI();
     };
   }
-  document.getElementById('closeNotif').onclick=()=>{ document.getElementById('notifPanel').style.display='none'; };
+  document.getElementById('closeNotif').onclick=()=>{
+    document.getElementById('notifPanel').style.display='none';
+    document.getElementById('notifOverlay').style.display='none';
+  };
   document.getElementById('clearNotifs').onclick=()=>{
-    notifications=[]; saveNotifs(); updateNotifUI();
+    if(confirm('Clear all notifications?')){
+      notifications=[]; saveNotifs(); updateNotifUI();
+    }
   };
 }
 
@@ -169,7 +203,6 @@ function saveData(){
   localStorage.setItem(getUserKey('transactions'), JSON.stringify(transactions));
   localStorage.setItem(getUserKey('salary'), salary);
 }
-
 document.querySelectorAll('#mainNav div').forEach(el=>{
   el.addEventListener('click',()=>{
     const page=el.dataset.page;
@@ -187,9 +220,8 @@ if(setSalaryBtn) setSalaryBtn.onclick=()=>{
   const v=parseFloat(document.getElementById('salaryInput').value);
   if(!v||v<=0) return alert('Enter valid salary');
   salary=v; saveData(); updateUI();
-  addNotif(`💰 Salary set to ₦${v.toLocaleString()}`);
+  addNotif(`💰 Salary set to <b>₦${v.toLocaleString()}</b>`);
 };
-
 const addBtn=document.getElementById('addBtn');
 if(addBtn) addBtn.onclick=()=>{
   const amount=parseFloat(document.getElementById('amount').value);
@@ -200,21 +232,20 @@ if(addBtn) addBtn.onclick=()=>{
   const amt=document.getElementById('amount'); if(amt) amt.value='';
   const cat=document.getElementById('category'); if(cat) cat.value='';
   saveData(); updateUI();
-  addNotif(`💸 Added ${category}: ₦${amount} on ${date}`);
+  addNotif(`💸 Spent <b>₦${amount}</b> on <b>${category}</b> • ${date}`);
 };
-
 const resetBtn=document.getElementById('resetBtn');
 if(resetBtn) resetBtn.onclick=()=>{
   if(confirm('Reset all?')){
     transactions=[]; saveData(); updateUI();
-    addNotif(`🗑️ All transactions reset`);
+    addNotif(`🗑️ All transactions were reset`);
   }
 };
 const profileResetBtn=document.getElementById('profileResetBtn');
 if(profileResetBtn) profileResetBtn.onclick=()=>{
   if(confirm('Reset all data?')){
     transactions=[]; salary=0; saveData(); updateUI();
-    addNotif(`⚠️ All data cleared`);
+    addNotif(`⚠️ All data cleared - salary reset`);
   }
 };
 
@@ -238,11 +269,10 @@ function updateUI(){
   const icons={Food:'🍔',Transport:'🚌',Shopping:'🛍️',Bills:'💡'};
   if(list){
     if(transactions.length===0) list.innerHTML='No transactions yet';
-    else list.innerHTML=transactions.slice(0,5).map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee"><div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;background:#f5f5f7;border-radius:10px;display:grid;place-items:center;font-size:18px">${icons[t.category]||'💰'}</span><div><b>${t.category}</b><br><small style="color:#888">${t.date}</small></div></div><b style="color:#c94c4c">-₦${t.amount}</b></div>`).join('');
+    else list.innerHTML=transactions.slice(0,5).map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee;animation: slideIn 0.3s"><div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;background:#f5f5f7;border-radius:10px;display:grid;place-items:center;font-size:18px">${icons[t.category]||'💰'}</span><div><b>${t.category}</b><br><small style="color:#888">${t.date}</small></div></div><b style="color:#c94c4c">-₦${t.amount}</b></div>`).join('');
   }
   updateBudget();
 }
-
 function updateBudget(){
   const cats={Food:0,Transport:0,Shopping:0,Bills:0};
   transactions.forEach(t=>{ if(cats[t.category]!==undefined) cats[t.category]+=t.amount; });
@@ -252,28 +282,26 @@ function updateBudget(){
   const classes={Food:'food',Transport:'trans',Shopping:'shop',Bills:'bills'};
   container.innerHTML=Object.keys(cats).map(k=>{
     const pct=total?Math.min(100,Math.round((cats[k]/2000)*100)):0;
-    return `<div class="budget-cat ${classes[k]}"><div class="budget-cat-top"><div class="budget-cat-left"><span class="cat-icon">${icons[k]}</span><div><b>${k}</b><small>₦${cats[k]} spent</small></div></div><div class="budget-cat-right">₦${cats[k]}</div></div><div class="progress"><div style="width:${pct}%"></div></div></div>`;
+    return `<div class="budget-cat ${classes[k]}"><div class="budget-cat-top"><div class="budget-cat-left"><span class="cat-icon">${icons[k]}</span><div><b>${k}</b><small>₦${cats[k]} spent</small></div></div><div class="budget-cat-right">₦${cats[k]}</div></div><div class="progress"><div style="width:${pct}%;transition:width 0.8s ease"></div></div></div>`;
   }).join('');
   const bProg=document.getElementById('bProg'); if(bProg) bProg.style.width=Math.min(100,Math.round((total/2000)*100))+'%';
   const tip=document.getElementById('tipPct'); if(tip) tip.textContent=Math.min(100,Math.round((total/2000)*100))+'%';
 }
-
 function renderCharts(){
   const cats={Food:0,Transport:0,Shopping:0,Bills:0};
   transactions.forEach(t=>{ if(cats[t.category]!==undefined) cats[t.category]+=t.amount; });
   const ctx1=document.getElementById('donutChart');
   if(ctx1){
     if(donutChart) donutChart.destroy();
-    donutChart=new Chart(ctx1,{ type:'doughnut', data:{ labels:Object.keys(cats), datasets:[{data:Object.values(cats), backgroundColor:['#ff7a00','#4a90e2','#e94e9a','#4caf50']}] }, options:{responsive:true, plugins:{legend:{display:false}}} });
+    donutChart=new Chart(ctx1,{ type:'doughnut', data:{ labels:Object.keys(cats), datasets:[{data:Object.values(cats), backgroundColor:['#ff7a00','#4a90e2','#e94e9a','#4caf50']}] }, options:{responsive:true, animation:{animateScale:true,duration:1000}, plugins:{legend:{display:false}}} });
   }
   const ctx2=document.getElementById('barChart');
   if(ctx2){
     if(barChart) barChart.destroy();
     const months={}; transactions.forEach(t=>{ const m=t.date.slice(0,7); months[m]=(months[m]||0)+t.amount; });
-    barChart=new Chart(ctx2,{ type:'bar', data:{ labels:Object.keys(months), datasets:[{label:'Spending', data:Object.values(months), backgroundColor:'#4a90e2'}] }, options:{responsive:true, plugins:{legend:{display:false}}} });
+    barChart=new Chart(ctx2,{ type:'bar', data:{ labels:Object.keys(months), datasets:[{label:'Spending', data:Object.values(months), backgroundColor:'#4a90e2'}] }, options:{responsive:true, animation:{duration:1000}, plugins:{legend:{display:false}}} });
   }
 }
-
 const seeAllBtn=document.getElementById('seeAllBtn');
 if(seeAllBtn) seeAllBtn.onclick=()=>{
   const modal=document.getElementById('historyModal'); if(modal) modal.classList.add('show');
@@ -283,19 +311,16 @@ if(seeAllBtn) seeAllBtn.onclick=()=>{
   const cnt=document.getElementById('historyCount'); if(cnt) cnt.textContent=transactions.length;
   const tot=document.getElementById('historyTotal'); if(tot) tot.textContent='₦'+transactions.reduce((s,t)=>s+t.amount,0);
 };
-
 const closeHistory=document.getElementById('closeHistory');
 if(closeHistory) closeHistory.onclick=()=>{ const m=document.getElementById('historyModal'); if(m) m.classList.remove('show'); };
-
 const exportBtn=document.getElementById('exportBtn');
 if(exportBtn) exportBtn.onclick=()=>{
   const data={user:getCurrentUser(),salary,transactions};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download='expense-data.json'; a.click();
-  addNotif(`📄 Data exported`);
+  addNotif(`📄 Data exported as JSON`);
 };
-
 const darkToggle=document.getElementById('darkModeToggle');
 if(darkToggle){
   darkToggle.onchange=(e)=>{
@@ -304,5 +329,4 @@ if(darkToggle){
   };
   if(localStorage.getItem('darkMode')==='true'){ document.body.classList.add('dark'); darkToggle.checked=true; }
 }
-
 checkAuth();
