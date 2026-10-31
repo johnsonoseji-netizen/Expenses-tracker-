@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Expense Tracker</title>
-<link rel="stylesheet" href="style.css?v=127">
+<link rel="stylesheet" href="style.css?v=131">
 </head>
 <body>
 
@@ -109,7 +109,54 @@
     <p class="page-subtitle">Manage your account</p>
   </div>
   <div class="section">
-    <div class="box">👤 Profile settings</div>
+    <div class="box box-pad center">
+      <div class="avatar" style="width:64px;height:64px;font-size:32px;margin:0 auto 10px;">👤</div>
+      <b style="font-size:18px;display:block;">Expense Tracker</b>
+      <small class="muted">expense@tracker.com</small>
+    </div>
+    <div class="cards mt16">
+      <div class="card in" style="flex-direction:column;align-items:flex-start;padding:12px;">
+        <span style="margin-bottom:6px;">💰</span>
+        <b style="font-size:11px;">Total Balance</b>
+        <strong id="pBal" style="font-size:15px;margin-top:4px;">₦0</strong>
+      </div>
+      <div class="card in" style="flex-direction:column;align-items:flex-start;padding:12px;background:#e8f5e9;">
+        <span style="margin-bottom:6px;background:#4caf50;color:#fff;">↗</span>
+        <b style="font-size:11px;color:#2e7d32;">Income</b>
+        <strong id="pIncome" style="font-size:15px;margin-top:4px;color:#2e7d32;">+₦0</strong>
+      </div>
+      <div class="card ex" style="flex-direction:column;align-items:flex-start;padding:12px;">
+        <span style="margin-bottom:6px;">↘</span>
+        <b style="font-size:11px;">Expenses</b>
+        <strong id="pExp" style="font-size:15px;margin-top:4px;">-₦0</strong>
+      </div>
+    </div>
+    <div class="form-title">Settings</div>
+    <div class="box" style="padding:0;overflow:hidden;">
+      <div class="setting-item" id="notifSetting">
+        <div class="setting-left"><span class="setting-icon" style="background:#e3f2fd;">🔔</span><b>Notifications</b></div>
+        <span>›</span>
+      </div>
+      <div class="setting-item" id="exportBtn">
+        <div class="setting-left"><span class="setting-icon" style="background:#f3e5f5;">📄</span><b>Export Data</b></div>
+        <span>›</span>
+      </div>
+      <div class="setting-item">
+        <div class="setting-left"><span class="setting-icon" style="background:#e8eaf6;">🌙</span><b>Dark Mode</b></div>
+        <label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label>
+      </div>
+      <div class="setting-item" id="profileResetBtn" style="color:#c94c4c;">
+        <div class="setting-left"><span class="setting-icon" style="background:#ffebee;">🗑️</span><b style="color:#c94c4c;">Reset All Data</b></div>
+        <span>›</span>
+      </div>
+      <div class="setting-item" id="aboutBtn">
+        <div class="setting-left"><span class="setting-icon" style="background:#f5f5f7;">ℹ️</span><b>About App</b></div>
+        <span>›</span>
+      </div>
+    </div>
+    <div class="box mt20 center" style="color:#888;font-size:13px;">
+      Expense Tracker v1.3.1<br>Built with ❤️ in Nigeria
+    </div>
   </div>
 </div>
 
@@ -135,6 +182,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="app.js?v=127"></script>
+<script src="app.js?v=131"></script>
 </body>
 </html>
