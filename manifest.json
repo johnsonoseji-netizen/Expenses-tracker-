@@ -1,19 +1,19 @@
 {
-  "name": "Expenses Tracker",
+  "name": "Expense Tracker",
   "short_name": "Expenses",
-  "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "start_url": "index.html",
+  "background_color": "#121212",
   "theme_color": "#0a53a5",
   "icons": [
     {
       "src": "Icon.jpg",
-      "sizes": "192x192",
+      "sizes": "512x512",
       "type": "image/jpeg"
     },
     {
       "src": "Icon.jpg",
-      "sizes": "512x512",
+      "sizes": "192x192",
       "type": "image/jpeg"
     }
   ]
