@@ -1,10 +1,12 @@
-// EXPENSE TRACKER v142 - FULL FIXED - IMAGES RESTORED
+// EXPENSE TRACKER v143 - WITH BELL NOTIFICATIONS
 let transactions = [];
 let salary = 0;
 let donutChart, barChart;
+let notifications = [];
 
 (function(){
-  let users=[]; try{ users=JSON.parse(localStorage.getItem('users')||'[]'); }catch(e){}
+  let users=[]; 
+  try{ users=JSON.parse(localStorage.getItem('users')||'[]'); }catch(e){}
   if(users.length===0){
     users.push({name:'Prince Oseji', email:'princeoseji@gmail.com', pass:'123456', pic:'', since:2024});
     localStorage.setItem('users', JSON.stringify(users));
@@ -13,6 +15,63 @@ let donutChart, barChart;
 
 function getCurrentUser(){ try{ return JSON.parse(localStorage.getItem('currentUser')||'null'); }catch(e){ return null; } }
 function getUserKey(k){ const u=getCurrentUser(); return u?`${k}_${u.email.toLowerCase()}`:k; }
+
+// ===== NOTIFICATION SYSTEM =====
+function loadNotifs(){
+  try{ notifications=JSON.parse(localStorage.getItem(getUserKey('notifications'))||'[]'); }catch(e){ notifications=[]; }
+  updateNotifUI();
+}
+function saveNotifs(){
+  localStorage.setItem(getUserKey('notifications'), JSON.stringify(notifications));
+}
+function addNotif(msg){
+  const now = new Date().toLocaleString();
+  notifications.unshift({id:Date.now(), msg, time: now});
+  if(notifications.length>20) notifications=notifications.slice(0,20);
+  saveNotifs();
+  updateNotifUI();
+}
+function updateNotifUI(){
+  const dot=document.querySelector('.dot');
+  const count=notifications.length;
+  if(dot){
+    if(count>0){ dot.style.display='grid'; dot.textContent=count>9?'9+':count; }
+    else dot.style.display='none';
+  }
+  const list=document.getElementById('notifList');
+  if(list){
+    if(notifications.length===0) list.innerHTML='<p style="padding:20px;text-align:center;color:#888">No notifications</p>';
+    else list.innerHTML=notifications.map(n=>`<div style="padding:12px;border-bottom:1px solid #eee"><div style="font-size:14px">${n.msg}</div><small style="color:#888">${n.time}</small></div>`).join('');
+  }
+}
+function initNotifPanel(){
+  if(document.getElementById('notifPanel')) return;
+  const panel=document.createElement('div');
+  panel.id='notifPanel';
+  panel.innerHTML=`
+    <div id="notifHeader" style="display:flex;justify-content:space-between;align-items:center;padding:14px;border-bottom:1px solid #eee">
+      <b>Notifications</b>
+      <div><button id="clearNotifs" style="margin-right:8px;border:none;background:#f5f5f5;padding:6px 10px;border-radius:8px">Clear</button><button id="closeNotif" style="border:none;background:none;font-size:18px">✕</button></div>
+    </div>
+    <div id="notifList" style="max-height:300px;overflow:auto"></div>
+  `;
+  panel.style.cssText='position:fixed;top:60px;right:10px;width:300px;background:white;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.2);z-index:9999;display:none;';
+  document.body.appendChild(panel);
+  
+  const bell=document.getElementById('notifBell');
+  if(bell){
+    bell.style.cursor='pointer';
+    bell.onclick=()=>{
+      const p=document.getElementById('notifPanel');
+      p.style.display=p.style.display==='none' || !p.style.display || p.style.display==='' ? 'block':'none';
+      updateNotifUI();
+    };
+  }
+  document.getElementById('closeNotif').onclick=()=>{ document.getElementById('notifPanel').style.display='none'; };
+  document.getElementById('clearNotifs').onclick=()=>{
+    notifications=[]; saveNotifs(); updateNotifUI();
+  };
+}
 
 function checkAuth(){
   const user=getCurrentUser();
@@ -36,6 +95,8 @@ function checkAuth(){
     const emailEl=document.getElementById('ownerEmailDisplay'); if(emailEl) emailEl.textContent=user.email;
     const headerName=document.getElementById('headerName'); if(headerName) headerName.textContent=user.name;
     const sinceEl=document.getElementById('ownerSince'); if(sinceEl) sinceEl.textContent='Member since '+(user.since||2024);
+    initNotifPanel();
+    loadNotifs();
     loadUserData();
   } else {
     if(auth){ auth.style.display='block'; auth.classList.add('active'); }
@@ -49,7 +110,6 @@ const loginTab=document.getElementById('loginTab');
 const registerTab=document.getElementById('registerTab');
 const loginForm=document.getElementById('loginForm');
 const registerForm=document.getElementById('registerForm');
-
 if(loginTab){
   loginTab.onclick=()=>{
     loginTab.classList.add('active'); registerTab.classList.remove('active');
@@ -64,7 +124,6 @@ if(registerTab){
     if(registerForm) registerForm.style.display='block';
   };
 }
-
 const registerBtn=document.getElementById('registerBtn');
 if(registerBtn){
   registerBtn.onclick=()=>{
@@ -84,7 +143,6 @@ if(registerBtn){
     checkAuth();
   };
 }
-
 const loginBtn=document.getElementById('loginBtn');
 if(loginBtn){
   loginBtn.onclick=()=>{
@@ -98,7 +156,6 @@ if(loginBtn){
     checkAuth();
   };
 }
-
 const logoutBtn=document.getElementById('logoutBtn');
 if(logoutBtn) logoutBtn.onclick=()=>{ if(confirm('Logout?')){ localStorage.removeItem('currentUser'); location.reload(); } };
 
@@ -130,6 +187,7 @@ if(setSalaryBtn) setSalaryBtn.onclick=()=>{
   const v=parseFloat(document.getElementById('salaryInput').value);
   if(!v||v<=0) return alert('Enter valid salary');
   salary=v; saveData(); updateUI();
+  addNotif(`💰 Salary set to ₦${v.toLocaleString()}`);
 };
 
 const addBtn=document.getElementById('addBtn');
@@ -142,38 +200,46 @@ if(addBtn) addBtn.onclick=()=>{
   const amt=document.getElementById('amount'); if(amt) amt.value='';
   const cat=document.getElementById('category'); if(cat) cat.value='';
   saveData(); updateUI();
+  addNotif(`💸 Added ${category}: ₦${amount} on ${date}`);
 };
 
 const resetBtn=document.getElementById('resetBtn');
-if(resetBtn) resetBtn.onclick=()=>{ if(confirm('Reset all?')){ transactions=[]; saveData(); updateUI(); } };
+if(resetBtn) resetBtn.onclick=()=>{
+  if(confirm('Reset all?')){
+    transactions=[]; saveData(); updateUI();
+    addNotif(`🗑️ All transactions reset`);
+  }
+};
 const profileResetBtn=document.getElementById('profileResetBtn');
-if(profileResetBtn) profileResetBtn.onclick=()=>{ if(confirm('Reset all data?')){ transactions=[]; salary=0; saveData(); updateUI(); } };
+if(profileResetBtn) profileResetBtn.onclick=()=>{
+  if(confirm('Reset all data?')){
+    transactions=[]; salary=0; saveData(); updateUI();
+    addNotif(`⚠️ All data cleared`);
+  }
+};
 
-// ===== FIXED WITH IMAGES =====
 function updateUI(){
   const totalExp=transactions.reduce((s,t)=>s+t.amount,0);
   const balance=salary-totalExp;
-  const totalBal=document.getElementById('totalBal'); if(totalBal) totalBal.textContent='₦'+balance.toLocaleString();
-  const incomeVal=document.getElementById('incomeVal'); if(incomeVal) incomeVal.textContent='+₦'+salary.toLocaleString();
-  const expVal=document.getElementById('expVal'); if(expVal) expVal.textContent='-₦'+totalExp.toLocaleString();
-  const bIncome=document.getElementById('bIncome'); if(bIncome) bIncome.textContent='₦'+salary.toLocaleString();
-  const bExp=document.getElementById('bExp'); if(bExp) bExp.textContent='₦'+totalExp.toLocaleString();
-  const bSpent=document.getElementById('bSpent'); if(bSpent) bSpent.textContent='₦'+totalExp.toLocaleString();
-  const bRem=document.getElementById('bRem'); if(bRem) bRem.textContent='₦'+(2000-totalExp).toLocaleString();
-  const pBal=document.getElementById('pBal'); if(pBal) pBal.textContent='₦'+balance.toLocaleString();
-  const pIncome=document.getElementById('pIncome'); if(pIncome) pIncome.textContent='+₦'+salary.toLocaleString();
-  const pExp=document.getElementById('pExp'); if(pExp) pExp.textContent='-₦'+totalExp.toLocaleString();
-  const aTotal=document.getElementById('aTotal'); if(aTotal) aTotal.textContent='₦'+totalExp.toLocaleString();
-  const aAvg=document.getElementById('aAvg'); if(aAvg) aAvg.textContent='₦'+(transactions.length?Math.round(totalExp/30):0).toLocaleString();
-  
-  // IMAGE RESTORED HERE - THIS WAS MISSING
+  const set=(id,val)=>{ const e=document.getElementById(id); if(e) e.textContent=val; };
+  set('totalBal','₦'+balance.toLocaleString());
+  set('incomeVal','+₦'+salary.toLocaleString());
+  set('expVal','-₦'+totalExp.toLocaleString());
+  set('bIncome','₦'+salary.toLocaleString());
+  set('bExp','₦'+totalExp.toLocaleString());
+  set('bSpent','₦'+totalExp.toLocaleString());
+  set('bRem','₦'+(2000-totalExp).toLocaleString());
+  set('pBal','₦'+balance.toLocaleString());
+  set('pIncome','+₦'+salary.toLocaleString());
+  set('pExp','-₦'+totalExp.toLocaleString());
+  set('aTotal','₦'+totalExp.toLocaleString());
+  set('aAvg','₦'+(transactions.length?Math.round(totalExp/30):0).toLocaleString());
   const list=document.getElementById('transList');
   const icons={Food:'🍔',Transport:'🚌',Shopping:'🛍️',Bills:'💡'};
   if(list){
     if(transactions.length===0) list.innerHTML='No transactions yet';
     else list.innerHTML=transactions.slice(0,5).map(t=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #eee"><div style="display:flex;align-items:center;gap:10px"><span style="width:38px;height:38px;background:#f5f5f7;border-radius:10px;display:grid;place-items:center;font-size:18px">${icons[t.category]||'💰'}</span><div><b>${t.category}</b><br><small style="color:#888">${t.date}</small></div></div><b style="color:#c94c4c">-₦${t.amount}</b></div>`).join('');
   }
-  const dot=document.querySelector('.dot'); if(dot){ if(transactions.length>0){ dot.style.display='grid'; dot.textContent=transactions.length; } else dot.style.display='none'; }
   updateBudget();
 }
 
@@ -208,7 +274,6 @@ function renderCharts(){
   }
 }
 
-// IMAGE RESTORED IN HISTORY TOO
 const seeAllBtn=document.getElementById('seeAllBtn');
 if(seeAllBtn) seeAllBtn.onclick=()=>{
   const modal=document.getElementById('historyModal'); if(modal) modal.classList.add('show');
@@ -228,6 +293,7 @@ if(exportBtn) exportBtn.onclick=()=>{
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a'); a.href=url; a.download='expense-data.json'; a.click();
+  addNotif(`📄 Data exported`);
 };
 
 const darkToggle=document.getElementById('darkModeToggle');
