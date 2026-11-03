@@ -5,7 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Expense Tracker</title>
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="style.css?v=146">
+<meta name="theme-color" content="#6366f1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="Icon.jpg">
+<link rel="stylesheet" href="style.css?v=147">
 </head>
 <body>
 
@@ -23,9 +27,9 @@
       </div>
       <div id="loginForm">
         <div class="label">Email</div>
-        <div class="input-box"><input id="loginEmail" type="email" value="princeoseji@gmail.com"></div>
+        <div class="input-box"><input id="loginEmail" type="email" value="princeoseji@gmail.com" autocomplete="email"></div>
         <div class="label">Password</div>
-        <div class="input-box"><input id="loginPass" type="password" value="123456"></div>
+        <div class="input-box"><input id="loginPass" type="password" value="123456" autocomplete="current-password"></div>
         <button class="btn" id="loginBtn">Login</button>
         <p id="authDebug">Demo: princeoseji@gmail.com / 123456</p>
       </div>
@@ -75,7 +79,7 @@
     <div class="form-title">Add Transaction</div>
     <div class="input-box"><span>₦</span><input id="amount" type="number" placeholder="0.00"></div>
     <div class="label">Category</div>
-    <div class="input-box"><select id="category"><option value="">Choose...</option><option>Food</option><option>Transport</option><option>Shopping</option><option>Bills</option></select></div>
+    <div class="input-box"><select id="category"><option value="">Choose...</option><option value="Food">Food</option><option value="Transport">Transport</option><option value="Shopping">Shopping</option><option value="Bills">Bills</option></select></div>
     <div class="label">Date</div>
     <div class="input-box"><input id="date" type="date"><span>📅</span></div>
     <button class="btn" id="addBtn">+ Add</button>
@@ -162,10 +166,10 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="app.js?v=146"></script>
+<script src="app.js?v=147"></script>
 <script>
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
+  navigator.serviceWorker.register('sw.js').then(()=>console.log('App installed'));
 }
 </script>
 </body>

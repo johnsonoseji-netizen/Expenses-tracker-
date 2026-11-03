@@ -1,4 +1,4 @@
-// EXPENSE TRACKER v147 - FINAL - SALARY ADDS UP
+// EXPENSE TRACKER v148 - FINAL FIXED
 let transactions = [];
 let salary = 0;
 let donutChart, barChart;
@@ -20,15 +20,6 @@ function getUserKey(k){
   const u=getCurrentUser(); 
   return u?`${k}_${u.email.toLowerCase()}`:k; 
 }
-
-// DARK MODE CSS
-(function injectDarkModeCSS(){
-  if(document.getElementById('darkModeFix')) return;
-  const s=document.createElement('style');
-  s.id='darkModeFix';
-  s.innerHTML=` body.dark{ background:#121212 !important; color:#e0e0e0 !important; } body.dark .top, body.dark .budget-top{ background:#0d4d2d !important; } body.dark .section, body.dark .box, body.dark .input-box, body.dark .salary-box, body.dark .history-container{ background:#1e1e1e !important; color:#e0e0e0 !important; border-color:#333 !important; } body.dark .nav div.active{ color:#159957 !important; } `;
-  document.head.appendChild(s);
-})();
 
 // NOTIFICATIONS
 function loadNotifs(){
@@ -161,14 +152,13 @@ document.querySelectorAll('#mainNav div').forEach(el=>{
   });
 });
 
-// ===== FIXED: SALARY NOW ADDS UP =====
 const setSalaryBtn=document.getElementById('setSalary');
 if(setSalaryBtn){
   setSalaryBtn.onclick=()=>{
     const input=document.getElementById('salaryInput');
     const v=parseFloat(input.value);
     if(!v||v<=0) return alert('Enter valid amount');
-    salary += v; // ADD, NOT REPLACE - 2000+1000=3000
+    salary += v;
     input.value='';
     saveData(); updateUI();
     addNotif(`💰 Added <b>₦${v.toLocaleString()}</b> to salary. Total: <b>₦${salary.toLocaleString()}</b>`);
@@ -235,23 +225,81 @@ function updateBudget(){
   const budgetLimit = salary>0?salary:2000;
   container.innerHTML=Object.keys(cats).map(k=>{ const pct=budgetLimit?Math.min(100,Math.round((cats[k]/budgetLimit)*100)):0; return `<div class="budget-cat"><div class="budget-cat-top"><div class="budget-cat-left"><span class="cat-icon">${icons[k]}</span><div><b>${k}</b><small>₦${cats[k].toLocaleString()}</small></div></div><div>₦${cats[k].toLocaleString()}</div></div><div class="progress"><div style="width:${pct}%"></div></div></div>`; }).join('');
   const bProg=document.getElementById('bProg'); if(bProg) bProg.style.width=Math.min(100,Math.round((total/budgetLimit)*100))+'%';
+  const tipPct=document.getElementById('tipPct'); if(tipPct) tipPct.textContent=Math.min(100,Math.round((total/budgetLimit)*100))+'%';
 }
 function renderCharts(){
   const cats={Food:0,Transport:0,Shopping:0,Bills:0};
   transactions.forEach(t=>{ if(t.type!=='income' && cats[t.category]!==undefined) cats[t.category]+=t.amount; });
   const ctx1=document.getElementById('donutChart');
-  if(ctx1){ if(donutChart) donutChart.destroy(); donutChart=new Chart(ctx1,{ type:'doughnut', data:{ labels:Object.keys(cats), datasets:[{data:Object.values(cats), backgroundColor:['#ff7a00','#159957','#e94e9a','#4caf50']}] }, options:{responsive:true, plugins:{legend:{display:false}}} }); }
+  if(ctx1){ if(donutChart) donutChart.destroy(); donutChart=new Chart(ctx1,{ type:'doughnut', data:{ labels:Object.keys(cats), datasets:[{data:Object.values(cats), backgroundColor:['#ff7a00','#159957','#e94e9a','#4caf50']}] }, options:{responsive:true, plugins:{legend:{position:'bottom'}}} }); }
   const ctx2=document.getElementById('barChart');
   if(ctx2){ if(barChart) barChart.destroy(); const months={}; transactions.forEach(t=>{ if(t.type!=='income'){ const m=t.date.slice(0,7); months[m]=(months[m]||0)+t.amount; } }); barChart=new Chart(ctx2,{ type:'bar', data:{ labels:Object.keys(months), datasets:[{label:'Spending', data:Object.values(months), backgroundColor:'#159957'}] }, options:{responsive:true, plugins:{legend:{display:false}}} }); }
 }
-const seeAllBtn=document.getElementById('seeAllBtn');
-if(seeAllBtn) seeAllBtn.onclick=()=>{
-  const modal=document.getElementById('historyModal'); if(modal) modal.classList.add('show');
+
+// === FIXED HISTORY - DATE NOT TOGETHER + COUNT/TOTAL FIXED ===
+function openHistory(){
+  const modal=document.getElementById('historyModal');
   const list=document.getElementById('fullHistoryList');
-  if(list) list.innerHTML=transactions.length?transactions.map(t=>{ const isInc=t.type==='income'; return `<div style="display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid #eee"><div><b>${t.category}</b> <small>${t.date}</small></div><b>${isInc?'+':'-'}₦${t.amount.toLocaleString()}</b></div>`; }).join(''):'No history';
+  const countEl=document.getElementById('historyCount');
+  const totalEl=document.getElementById('historyTotal');
+  
+  if(!transactions.length){
+    if(list) list.innerHTML='<p style="text-align:center;padding:20px;color:#888">No history yet</p>';
+    if(countEl) countEl.textContent='0';
+    if(totalEl) totalEl.textContent='₦0';
+  } else {
+    let total=0;
+    if(list) list.innerHTML=transactions.map(t=>{
+      total+=Number(t.amount)||0;
+      const isInc=t.type==='income';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-bottom:1px solid #eee">
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <b style="font-size:15px">${t.category}</b>
+          <small style="font-size:12px;color:#666;background:#f1f5f9;padding:2px 8px;border-radius:12px;width:fit-content">📅 ${t.date}</small>
+        </div>
+        <b style="color:${isInc?'#159957':'#b71c1c'};font-size:15px">${isInc?'+':'-'}₦${Number(t.amount).toLocaleString()}</b>
+      </div>`;
+    }).join('');
+    if(countEl) countEl.textContent=transactions.length;
+    if(totalEl) totalEl.textContent='₦'+total.toLocaleString();
+  }
+  if(modal){ modal.classList.add('show'); modal.classList.add('active'); }
+}
+
+const seeAllBtn=document.getElementById('seeAllBtn');
+if(seeAllBtn) seeAllBtn.onclick=openHistory;
+
+const closeHistory=document.getElementById('closeHistory');
+if(closeHistory) closeHistory.onclick=()=>{
+  const m=document.getElementById('historyModal');
+  if(m){ m.classList.remove('show'); m.classList.remove('active'); }
 };
-const closeHistory=document.getElementById('closeHistory'); if(closeHistory) closeHistory.onclick=()=>{ document.getElementById('historyModal').classList.remove('show'); };
-const exportBtn=document.getElementById('exportBtn'); if(exportBtn) exportBtn.onclick=()=>{ const data={user:getCurrentUser(),salary,transactions}; const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='expense-data.json'; a.click(); };
+
+// close when click outside
+document.getElementById('historyModal')?.addEventListener('click', (e)=>{
+  if(e.target.id==='historyModal'){
+    e.target.classList.remove('show');
+    e.target.classList.remove('active');
+  }
+});
+
+const exportBtn=document.getElementById('exportBtn');
+if(exportBtn) exportBtn.onclick=()=>{
+  const data={user:getCurrentUser(),salary,transactions};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='expense-data.json'; a.click();
+};
+
 const darkToggle=document.getElementById('darkModeToggle');
-if(darkToggle){ darkToggle.onchange=(e)=>{ document.body.classList.toggle('dark', e.target.checked); localStorage.setItem('darkMode', e.target.checked); }; if(localStorage.getItem('darkMode')==='true'){ document.body.classList.add('dark'); darkToggle.checked=true; } }
+if(darkToggle){
+  darkToggle.onchange=(e)=>{
+    document.body.classList.toggle('dark', e.target.checked);
+    localStorage.setItem('darkMode', e.target.checked);
+  };
+  if(localStorage.getItem('darkMode')==='true'){
+    document.body.classList.add('dark');
+    darkToggle.checked=true;
+  }
+}
 checkAuth();
