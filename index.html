@@ -6,13 +6,13 @@
 <title>Expense Tracker</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#6366f1">
-<link rel="stylesheet" href="style.css?v=152">
+<link rel="stylesheet" href="style.css?v=164">
 <script>if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(x=>x.unregister()));caches.keys().then(k=>k.forEach(x=>caches.delete(x)));}</script>
 </head>
 <body>
 <div id="auth" class="page active">
   <div class="top" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px 28px !important;">
-    <div class="avatar" style="position:static !important;width:76px !important;height:76px !important;background:white !important;border-radius:50% !important;display:grid !important;place-items:center;font-size:36px;margin:0 0 16px 0 !important;box-shadow:0 8px 24px rgba(0,0,0,0.15);left:auto !important;top:auto !important;">💰</div>
+    <div class="avatar" style="position:static !important;width:76px !important;height:76px !important;background:white !important;border-radius:50% !important;display:grid !important;place-items:center;font-size:36px;margin:0 0 16px 0 !important;box-shadow:0 8px 24px rgba(0,0,0,0.15);">💰</div>
     <h1 class="page-title" style="margin:0;">Expense Tracker</h1>
     <p class="page-subtitle" style="margin-top:6px;">Manage your money smartly</p>
   </div>
@@ -24,14 +24,42 @@
     </div>
   </div>
 </div>
+
 <div class="app-header" id="mainHeader" style="display:none"><div class="user-info"><div class="avatar" id="headerAvatar">👤</div><span id="headerName">Expense Tracker</span></div><div class="header-icons"><div class="icon-btn" id="notifBell">🔔<span class="dot" style="display:none"></span></div><div class="icon-btn">⚙️</div></div></div>
-<div id="home" class="page"><div class="top"><small>Total balance</small><h1 id="totalBal">₦0</h1><div class="salary-box"><span>💰</span><input id="salaryInput" type="number" placeholder="Enter salary"><button id="setSalary">Set Salary</button></div><div class="cards"><div class="card in"><span>↗</span><div><b>income</b><strong id="incomeVal">+₦0</strong></div></div><div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="expVal">-₦0</strong></div></div></div></div><div class="section"><div class="section-title"><span>Transactions</span><small id="seeAllBtn">see all</small></div><div id="transList">No transactions yet</div><div class="form-title">Add Transaction</div><div class="input-box"><span>₦</span><input id="amount" type="number" placeholder="0.00"></div><div class="label">Category</div><div class="input-box"><select id="category"><option value="">Choose...</option><option value="Food">Food</option><option value="Transport">Transport</option><option value="Shopping">Shopping</option><option value="Bills">Bills</option></select></div><div class="label">Date</div><div class="input-box"><input id="date" type="date"><span>📅</span></div><button class="btn" id="addBtn">+ Add</button><button class="reset" id="resetBtn">Reset</button></div></div>
+
+<div id="home" class="page">
+  <div class="top"><small>Total balance</small><h1 id="totalBal">₦0</h1>
+    <div class="salary-box"><span>💰</span><input id="salaryInput" type="number" placeholder="Enter salary"><button id="setSalary">Set Salary</button></div>
+    <div class="cards"><div class="card in"><span>↗</span><div><b>income</b><strong id="incomeVal">+₦0</strong></div></div><div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="expVal">-₦0</strong></div></div></div>
+  </div>
+  <div class="section">
+    <div class="section-title"><span>Transactions</span><small id="seeAllBtn">see all</small></div>
+    <div id="transList" style="margin-bottom:32px; padding-bottom:12px;">No transactions yet</div>
+
+    <!-- FIXED: Add Transaction now comes down with space -->
+    <div class="form-title" style="margin-top:40px; padding-top:20px; border-top:1px solid #dde8de; font-weight:700; font-size:16px;">Add Transaction</div>
+
+    <div class="input-box"><span>₦</span><input id="amount" type="number" placeholder="0.00"></div>
+    <div class="label">Category</div>
+    <div class="input-box"><select id="category"><option value="">Choose...</option><option value="Food">Food</option><option value="Transport">Transport</option><option value="Shopping">Shopping</option><option value="Bills">Bills</option></select></div>
+    <div class="label">Date</div>
+    <div class="input-box"><input id="date" type="date"><span>📅</span></div>
+    <button class="btn" id="addBtn">+ Add</button>
+    <button class="reset" id="resetBtn">Reset</button>
+  </div>
+</div>
+
 <div id="budget" class="page"><div class="budget-top"><small>Total Budget</small><h1>₦2,000.00</h1><div class="budget-stats"><span>Spent: <b id="bSpent">₦0</b></span><span>Remaining: <b id="bRem" class="green">₦2,000</b></span></div><div class="progress big"><div id="bProg"></div></div><div class="cards"><div class="card in"><span>💼</span><div><b>Income</b><strong id="bIncome">₦0</strong></div></div><div class="card ex"><span>💳</span><div><b>Expenses</b><strong id="bExp">₦0</strong></div></div></div></div><div class="section"><div class="section-title"><span>Budget Categories</span></div><div id="budgetCats"></div><div class="budget-tip">💡 Tip: You have spent <span id="tipPct">0%</span></div></div></div>
+
 <div id="analysis" class="page"><div class="top"><h1 class="page-title">Analysis</h1><p class="page-subtitle">Analytics</p></div><div class="section"><div class="box box-pad"><b class="box-title">Spending Breakdown</b><canvas id="donutChart" height="200"></canvas></div><div class="box box-pad" style="margin-top:12px"><b class="box-title">Monthly</b><canvas id="barChart" height="200"></canvas></div><div class="flex-row"><div class="box box-pad center flex1"><small>Total Spent</small><h2 id="aTotal">₦0</h2></div><div class="box box-pad center flex1"><small>Avg Daily</small><h2 id="aAvg">₦0</h2></div></div></div></div>
-<div id="profile" class="page"><div class="top"><h1 class="page-title">Profile</h1><p class="page-subtitle">Manage account</p></div><div class="section"><div class="box box-pad profile-box"><div class="avatar profile-avatar">👤</div><b id="ownerNameDisplay">Prince Oseji</b><small id="ownerEmailDisplay"></small><small id="ownerSince">Member since 2024</small></div><div class="cards profile-cards"><div class="card in"><span>💰</span><div><b>Total Balance</b><strong id="pBal">₦0</strong></div></div><div class="card in"><span>↗</span><div><b>Income</b><strong id="pIncome">+₦0</strong></div></div><div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="pExp">-₦0</strong></div></div></div><div class="form-title">Settings</div><div class="box"><div class="setting-item" id="exportBtn"><div class="setting-left"><span class="setting-icon">📄</span><b>Export</b></div><span>›</span></div><div class="setting-item"><div class="setting-left"><span class="setting-icon">🌙</span><b>Dark Mode</b></div><label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label></div><div class="setting-item" id="profileResetBtn"><div class="setting-left"><span class="setting-icon">🗑️</span><b>Reset Data</b></div><span>›</span></div><div class="setting-item" id="logoutBtn"><div class="setting-left"><span class="setting-icon">🚪</span><b>Logout</b></div><span>›</span></div></div></div></div>
+
+<div id="profile" class="page"><div class="top"><h1 class="page-title">Profile</h1><p class="page-subtitle">Manage account</p></div><div class="section"><div class="box box-pad profile-box"><div class="avatar profile-avatar">👤</div><b id="ownerNameDisplay">Prince Oseji</b><small id="ownerEmailDisplay"></small><small id="ownerSince">Member since 2024</small></div><div class="cards profile-cards"><div class="card in"><span>💰</span><div><b>Total Balance</b><strong id="pBal">₦0</strong></div></div><div class="card in"><span>↗</span><div><b>Income</b><strong id="pIncome">+₦0</strong></div></div><div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="pExp">-₦0</strong></div></div></div><div class="form-title" style="margin-top:24px;">Settings</div><div class="box"><div class="setting-item" id="exportBtn"><div class="setting-left"><span class="setting-icon">📄</span><b>Export</b></div><span>›</span></div><div class="setting-item"><div class="setting-left"><span class="setting-icon">🌙</span><b>Dark Mode</b></div><label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label></div><div class="setting-item" id="profileResetBtn"><div class="setting-left"><span class="setting-icon">🗑️</span><b>Reset Data</b></div><span>›</span></div><div class="setting-item" id="logoutBtn"><div class="setting-left"><span class="setting-icon">🚪</span><b>Logout</b></div><span>›</span></div></div></div></div>
+
 <div class="nav" id="mainNav" style="display:none"><div class="active" data-page="home"><span>🏠</span>Home</div><div data-page="budget"><span>📊</span>Budget</div><div data-page="analysis"><span>🎯</span>Analysis</div><div data-page="profile"><span>👤</span>Profile</div></div>
+
 <div id="historyModal"><div class="history-container"><div class="history-header"><b>History</b><button id="closeHistory">✕</button></div><div id="fullHistoryList"></div><div class="history-footer"><span>Items: <b id="historyCount">0</b></span><span>Total: <b id="historyTotal">₦0</b></span></div></div></div>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="app.js?v=152"></script>
+<script src="app.js?v=164"></script>
 </body>
 </html>
