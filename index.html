@@ -1,92 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Expenses Tracker</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Expense Tracker</title>
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css?v=146">
 </head>
 <body>
 
-<div id="trackerconatiner">
-
-  <header class="Trackheadingimg">
-    <div class="headingdv"><h1>Expenses Tracker</h1></div>
-    <div class="trackerimgcontain">
-      <div class="spanimg">
-        <span id="bellBtn">🔔<b id="bellDot" class="bell-dot"></b></span>
-        <span>👤</span>
-        
-        <!-- Notification Popup -->
-        <div id="notifBox" class="notif-box">
-          <div class="notif-header">
-            <h4>Notifications</h4>
-            <span id="closeNotif">✕</span>
-          </div>
-          <div id="notifList"></div>
-        </div>
-
+<div id="auth" class="page active">
+  <div class="top">
+    <div class="avatar">💰</div>
+    <h1 class="page-title">Expense Tracker</h1>
+    <p class="page-subtitle">Manage your money smartly</p>
+  </div>
+  <div class="section">
+    <div class="box box-pad">
+      <div id="authTabsWrap">
+        <button id="loginTab" class="auth-tab active">Login</button>
+        <button id="registerTab" class="auth-tab">Register</button>
+      </div>
+      <div id="loginForm">
+        <div class="label">Email</div>
+        <div class="input-box"><input id="loginEmail" type="email" value="princeoseji@gmail.com"></div>
+        <div class="label">Password</div>
+        <div class="input-box"><input id="loginPass" type="password" value="123456"></div>
+        <button class="btn" id="loginBtn">Login</button>
+        <p id="authDebug">Demo: princeoseji@gmail.com / 123456</p>
+      </div>
+      <div id="registerForm" style="display:none">
+        <div class="label">Full Name</div>
+        <div class="input-box"><input id="regName" type="text" placeholder="Prince Oseji"></div>
+        <div class="label">Email</div>
+        <div class="input-box"><input id="regEmail" type="email" placeholder="princeoseji@gmail.com"></div>
+        <div class="label">Password</div>
+        <div class="input-box"><input id="regPass" type="password" placeholder="Create password"></div>
+        <div class="label">Confirm</div>
+        <div class="input-box"><input id="regPass2" type="password" placeholder="Confirm"></div>
+        <button class="btn" id="registerBtn">Create Account</button>
       </div>
     </div>
-  </header>
-
-  <main id="mainacccpntainer">
-    <div class="balance_eye"><p>Total balance</p><span class="eye">👁️</span></div>
-    <div class="balnce"><div class="account_balance"><h2 class="mainbalance">£0</h2></div></div>
-    <div class="expenses_incomecontainer">
-      <div class="incomeblue">
-        <div class="incomeblueimg"><span>↗</span></div>
-        <div class="cutesyacc"><p>income</p><h4 id="constantnumberbalance">+£0</h4></div>
-      </div>
-      <div class="incomered">
-        <div class="incomeblueimg"><span>↘</span></div>
-        <div class="cutesyacc"><p>Expenses</p><h4 id="expenseBalance">-£0</h4></div>
-      </div>
-    </div>
-  </main>
-
-  <section id="transactioncontainer">
-    <div class="trans-header">
-      <h3>Transactions</h3>
-      <p id="seeAllBtn">see all</p>
-    </div>
-  </section>
-
-  <section id="transactioncontiner">
-    <div class="titlecontainer"><h4>Add Transaction</h4></div>
-    <div class="amount-input"><span>£</span><input placeholder="0.00" id="input" type="number"></div>
-    <div class="select-section">
-      <label for="category">Select Category</label>
-      <select id="category">
-        <option value="">Choose...</option>
-        <option value="groceries">Groceries</option>
-        <option value="salary">Salary</option>
-        <option value="coffee">Coffee</option>
-        <option value="car">Uber Car</option>
-        <option value="haircut">Haircut</option>
-        <option value="shopping">Shopping</option>
-      </select>
-    </div>
-    <div class="datesection">
-      <label>Date</label>
-      <div class="imagedate"><h5>Dec/10/2026</h5><span>📅</span></div>
-    </div>
-  </section>
-
-  <button id="btn">+ Add Transaction</button>
-  <button id="resetBtn">Reset All</button>
-
-  <nav class="navigation_section">
-    <div class="bottom-nav">
-      <div class="nav-item active"><span>🏠</span><p>Home</p></div>
-      <div class="nav-item"><span>📊</span><p>Budget</p></div>
-      <div class="nav-item"><span>🕹️</span><p>Analysis</p></div>
-      <div class="nav-item"><span>👤</span><p>Profile</p></div>
-    </div>
-  </nav>
-
+  </div>
 </div>
 
-<script src="app.js"></script>
+<div class="app-header" id="mainHeader" style="display:none">
+  <div class="user-info">
+    <div class="avatar" id="headerAvatar">👤</div>
+    <span id="headerName">Expense Tracker</span>
+  </div>
+  <div class="header-icons">
+    <div class="icon-btn" id="notifBell">🔔<span class="dot" style="display:none"></span></div>
+    <div class="icon-btn">⚙️</div>
+  </div>
+</div>
+
+<div id="home" class="page">
+  <div class="top">
+    <small>Total balance</small>
+    <h1 id="totalBal">₦0</h1>
+    <div class="salary-box">
+      <span>💰</span>
+      <input id="salaryInput" type="number" placeholder="Enter salary">
+      <button id="setSalary">Set Salary</button>
+    </div>
+    <div class="cards">
+      <div class="card in"><span>↗</span><div><b>income</b><strong id="incomeVal">+₦0</strong></div></div>
+      <div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="expVal">-₦0</strong></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title"><span>Transactions</span><small id="seeAllBtn">see all</small></div>
+    <div id="transList">No transactions yet</div>
+    <div class="form-title">Add Transaction</div>
+    <div class="input-box"><span>₦</span><input id="amount" type="number" placeholder="0.00"></div>
+    <div class="label">Category</div>
+    <div class="input-box"><select id="category"><option value="">Choose...</option><option>Food</option><option>Transport</option><option>Shopping</option><option>Bills</option></select></div>
+    <div class="label">Date</div>
+    <div class="input-box"><input id="date" type="date"><span>📅</span></div>
+    <button class="btn" id="addBtn">+ Add</button>
+    <button class="reset" id="resetBtn">Reset</button>
+  </div>
+</div>
+
+<div id="budget" class="page">
+  <div class="budget-top">
+    <small>Total Budget</small>
+    <h1>₦2,000.00</h1>
+    <div class="budget-stats">
+      <span>Spent: <b id="bSpent">₦0</b></span>
+      <span>Remaining: <b id="bRem" class="green">₦2,000</b></span>
+    </div>
+    <div class="progress big"><div id="bProg"></div></div>
+    <div class="cards">
+      <div class="card in"><span>💼</span><div><b>Income</b><strong id="bIncome">₦0</strong></div></div>
+      <div class="card ex"><span>💳</span><div><b>Expenses</b><strong id="bExp">₦0</strong></div></div>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title"><span>Budget Categories</span></div>
+    <div id="budgetCats"></div>
+    <div class="budget-tip">💡 Tip: You have spent <span id="tipPct">0%</span></div>
+  </div>
+</div>
+
+<div id="analysis" class="page">
+  <div class="top">
+    <h1 class="page-title">Analysis</h1>
+    <p class="page-subtitle">Analytics</p>
+  </div>
+  <div class="section">
+    <div class="box box-pad"><b class="box-title">Spending Breakdown</b><canvas id="donutChart" height="200"></canvas></div>
+    <div class="box box-pad" style="margin-top:12px"><b class="box-title">Monthly</b><canvas id="barChart" height="200"></canvas></div>
+    <div class="flex-row">
+      <div class="box box-pad center flex1"><small>Total Spent</small><h2 id="aTotal">₦0</h2></div>
+      <div class="box box-pad center flex1"><small>Avg Daily</small><h2 id="aAvg">₦0</h2></div>
+    </div>
+  </div>
+</div>
+
+<div id="profile" class="page">
+  <div class="top">
+    <h1 class="page-title">Profile</h1>
+    <p class="page-subtitle">Manage account</p>
+  </div>
+  <div class="section">
+    <div class="box box-pad profile-box">
+      <div class="avatar profile-avatar">👤</div>
+      <b id="ownerNameDisplay">Prince Oseji</b>
+      <small id="ownerEmailDisplay"></small>
+      <small id="ownerSince">Member since 2024</small>
+    </div>
+    <div class="cards profile-cards">
+      <div class="card in"><span>💰</span><div><b>Total Balance</b><strong id="pBal">₦0</strong></div></div>
+      <div class="card in"><span>↗</span><div><b>Income</b><strong id="pIncome">+₦0</strong></div></div>
+      <div class="card ex"><span>↘</span><div><b>Expenses</b><strong id="pExp">-₦0</strong></div></div>
+    </div>
+    <div class="form-title">Settings</div>
+    <div class="box">
+      <div class="setting-item" id="exportBtn"><div class="setting-left"><span class="setting-icon">📄</span><b>Export</b></div><span>›</span></div>
+      <div class="setting-item"><div class="setting-left"><span class="setting-icon">🌙</span><b>Dark Mode</b></div><label class="switch"><input type="checkbox" id="darkModeToggle"><span class="slider"></span></label></div>
+      <div class="setting-item" id="profileResetBtn"><div class="setting-left"><span class="setting-icon">🗑️</span><b>Reset Data</b></div><span>›</span></div>
+      <div class="setting-item" id="logoutBtn"><div class="setting-left"><span class="setting-icon">🚪</span><b>Logout</b></div><span>›</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="nav" id="mainNav" style="display:none">
+  <div class="active" data-page="home"><span>🏠</span>Home</div>
+  <div data-page="budget"><span>📊</span>Budget</div>
+  <div data-page="analysis"><span>🎯</span>Analysis</div>
+  <div data-page="profile"><span>👤</span>Profile</div>
+</div>
+
+<div id="historyModal">
+  <div class="history-container">
+    <div class="history-header"><b>History</b><button id="closeHistory">✕</button></div>
+    <div id="fullHistoryList"></div>
+    <div class="history-footer"><span>Items: <b id="historyCount">0</b></span><span>Total: <b id="historyTotal">₦0</b></span></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="app.js?v=146"></script>
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+</script>
 </body>
 </html>
